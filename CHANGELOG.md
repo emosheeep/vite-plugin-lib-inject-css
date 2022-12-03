@@ -1,3 +1,4 @@
 # 1.0.0
+## Features
 
-- First publish
+- feat: Supply JavaScript API and Command Line Tool.
