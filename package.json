@@ -1,0 +1,79 @@
+{
+  "name": "circular-dependency-scanner",
+  "version": "1.0.0",
+  "description": "Out-of-box and zero configuration circular dependencies detector, with both JavaScript API and Command Line Tool.",
+  "packageManager": "pnpm@7.17.1",
+  "license": "MIT",
+  "bin": {
+    "ds": "bin/ds.mjs"
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "./types/src/index.d.ts",
+  "exports": {
+    "require": "./dist/index.js",
+    "import": "./dist/index.mjs"
+  },
+  "scripts": {
+    "prepare": "husky install",
+    "prepublishOnly": "npm run build",
+    "lint": "eslint . --fix --ext .js,.ts",
+    "build": "vite build && tsc -d",
+    "watch": "vite build --watch",
+    "ds": "node bin/ds.mjs"
+  },
+  "dependencies": {
+    "@vue/compiler-sfc": "^3.2.45",
+    "commander": "^9.4.1",
+    "fast-glob": "^3.2.12",
+    "graph-cycles": "^2.0.1",
+    "minimatch": "^5.1.1",
+    "typescript": "^4.9.3",
+    "zx": "^7.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.10",
+    "@typescript-eslint/eslint-plugin": "^5.45.0",
+    "@typescript-eslint/parser": "^5.45.0",
+    "eslint": "^8.29.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-define-config": "^1.12.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-n": "^15.5.1",
+    "eslint-plugin-promise": "^6.1.1",
+    "husky": "^8.0.2",
+    "lint-staged": "^13.0.4",
+    "vite": "^3.2.4"
+  },
+  "files": [
+    "dist",
+    "types",
+    "CHANGELOG.md",
+    "README.md",
+    "README.zh_CN.md"
+  ],
+  "author": {
+    "name": "秦旭洋",
+    "email": "emosheeep@qq.com"
+  },
+  "homepage": "https://github.com/emosheeep/circular-dependency-scanner#readme",
+  "repository": {
+    "type": "github",
+    "url": "https://github.com/emosheeep/circular-dependency-scanner"
+  },
+  "bugs": {
+    "url": "https://github.com/emosheeep/circular-dependency-scanner/issues"
+  },
+  "keywords": [
+    "circular",
+    "scanner",
+    "detector",
+    "circles",
+    "cyclic",
+    "ast",
+    "javascript",
+    "ecmascript",
+    "circular-dependency",
+    "cli"
+  ]
+}
