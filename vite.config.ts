@@ -4,8 +4,8 @@ export default defineConfig({
   build: {
     minify: false,
     lib: {
-      fileName: 'index',
-      formats: ['es', 'cjs'],
+      fileName: () => 'index.mjs',
+      formats: ['es'],
       entry: 'src/index.ts',
     },
     rollupOptions: {

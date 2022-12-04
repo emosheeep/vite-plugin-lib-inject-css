@@ -2,12 +2,12 @@
 
 <div style="display: flex;">
   <a href="https://npmjs.com/package/circular-dependency-scanner">
-    <img src="https://img.shields.io/npm/v/circular-dependency-scanner" alt="npm package">
+    <img alt="npm version" src="https://img.shields.io/npm/v/circular-dependency-scanner">
   </a>
   <img alt="Publish Package" src="https://github.com/emosheeep/circular-dependency-scanner/actions/workflows/npm-publish.yml/badge.svg">
-  <img src="https://img.shields.io/npm/dt/circular-dependency-scanner" alt="npm downloads">
-  <img src="https://img.shields.io/npm/l/circular-dependency-scanner" alt="npm downloads">
-  <img src="https://img.shields.io/bundlephobia/minzip/circular-dependency-scanner" alt="package size">
+  <img alt="npm downloads" src="https://img.shields.io/npm/dt/circular-dependency-scanner">
+  <img alt="license" src="https://img.shields.io/npm/l/circular-dependency-scanner">
+  <img alt="bundle size" src="https://img.shields.io/bundlephobia/minzip/circular-dependency-scanner">
 </div>
 
 零配置、开箱即用📦的循环依赖检测工具，提供了 JavaScript API 和命令行工具。

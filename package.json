@@ -1,19 +1,15 @@
 {
   "name": "circular-dependency-scanner",
   "version": "1.0.0",
+  "type": "module",
   "description": "Out-of-box and zero configuration circular dependencies detector, with both JavaScript API and Command Line Tool.",
   "packageManager": "pnpm@7.17.1",
   "license": "MIT",
   "bin": {
     "ds": "bin/ds.mjs"
   },
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "types": "./types/src/index.d.ts",
-  "exports": {
-    "require": "./dist/index.js",
-    "import": "./dist/index.mjs"
-  },
+  "main": "dist/index.mjs",
+  "types": "types/src/index.d.ts",
   "scripts": {
     "prepare": "husky install",
     "prepublishOnly": "npm run build",
