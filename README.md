@@ -10,12 +10,15 @@
   <img alt="bundle size" src="https://img.shields.io/bundlephobia/minzip/circular-dependency-scanner">
 </div>
 
-Out-of-box and zero configuration circular dependencies detector 📦, with both JavaScript API and Command Line Tool.
+Out-of-box circular dependencies detector, with both JavaScript API and Command Line Tool built in, support all file types we used in common like `.js,.jsx,.ts,.tsx,.mjs,.cjs,.vue`.
+
+Pull out `import/require/export` path from files and revert it into to real path (if aliased) with path alias configurations, then calculate the circles among and print which with colors.
 
 English | [中文](./README.zh_CN.md)
 
 # Features
 
+- 📦 All file types support.
 - 💡 Friendly Command Line Tool.
 - 🛠️ Fully Typed JavaScript APIs and Prompts.
 - 🌩 Tiny, Pretty, Fast and Reliable.
@@ -31,7 +34,7 @@ But now, you just run `ds`, all of the **(.js,.jsx,.ts,.tsx,.mjs,.cjs,.vue)** fi
 
 # Command Line Tool (Prefer)
 
-The `ds` command will be available after you installed this package globally.
+The `ds` command which means `depscan` will be available after you installed this package globally.
 
 ```sh
 pnpm i -g circular-dependency-scanner # or npm/yarn

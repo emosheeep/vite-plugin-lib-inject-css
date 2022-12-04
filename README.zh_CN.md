@@ -10,12 +10,15 @@
   <img alt="bundle size" src="https://img.shields.io/bundlephobia/minzip/circular-dependency-scanner">
 </div>
 
-零配置、开箱即用📦的循环依赖检测工具，提供了 JavaScript API 和命令行工具。
+开箱即用循环依赖检测器，内置了 JavaScript API 和命令行工具两种使用方式，支持我们常用的所有文件类型，如 `.js，.jsx，.ts，.tsx，.mjs，.cjs，.vue`。 
+ 
+从文件中取出 `import/require/export` 路径，并使用路径别名配置（alias）将其还原为真实路径（如果有别名的话），然后计算其中的循环引用关系并输出。
 
 [English](./README.md) | 中文
 
 # 特性
 
+- 📦 支持常用的所有类型文件类型。
 - 💡 提供命令行工具，同时具备友好的控制台输出。
 - 🛠️ 提供 JavaScript API，同时具备良好的类型提示。
 - 🌩 小巧、精致、快速、可靠。
@@ -31,7 +34,7 @@
 
 # 命令行工具（推荐）
 
-全局安装之后，会获得一个可执行命令 `ds`:
+全局安装之后，会获得一个可执行命令 `ds`（`depscan` 缩写）:
 ```sh
 pnpm i -g circular-dependency-scanner # or npm/yarn
 cd path/to/execute # change directory
