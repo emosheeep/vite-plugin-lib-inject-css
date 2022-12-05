@@ -35,7 +35,7 @@ export function circularDepsDetect(options: DetectOptions) {
 
   /* ----------- Parameters pre-handle start ----------- */
 
-  ignore = [...ignore, 'node_modules'];
+  ignore = [...new Set([...ignore, '**/node_modules/**'])];
 
   // convert alias to absolute path
   alias = Object.fromEntries(

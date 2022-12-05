@@ -15,7 +15,7 @@ program
   .option('--filter <pattern>', 'glob pattern to match output circles.')
   .option('--alias <pairs...>', 'path alias, follows `<from>:<to>` convention.', ['@:src'])
   .option('--absolute', 'print absolute path instead. usually use with editor which can quickly jump to the file.', false)
-  .option('-i, --ignore <patterns...>', 'glob patterns to exclude matches.', ['node_modules'])
+  .option('-i, --ignore <patterns...>', 'glob patterns to exclude matches.', ['**/node_modules/**'])
   .action((cwd, options) => {
     const { filter, alias, ...rest } = options;
     let { cycles } = circularDepsDetect({

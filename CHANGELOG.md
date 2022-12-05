@@ -1,3 +1,9 @@
+# 1.0.2
+
+## Fixes
+
+- fix: ignores about `node_modules` doesn't effect.
+
 # 1.0.1
 
 ## Fixes
