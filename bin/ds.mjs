@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import minimatch from 'minimatch';
 import { createRequire } from 'module';
 import { chalk } from 'zx';

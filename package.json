@@ -1,6 +1,6 @@
 {
   "name": "circular-dependency-scanner",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "description": "Out-of-box and zero configuration circular dependencies detector, with both JavaScript API and Command Line Tool.",
   "packageManager": "pnpm@7.17.1",
