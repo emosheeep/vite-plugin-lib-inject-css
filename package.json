@@ -25,7 +25,6 @@
     "graph-cycles": "^2.0.1",
     "listr2": "^5.0.6",
     "minimatch": "^5.1.1",
-    "tsup": "^6.5.0",
     "typescript": "^4.9.4",
     "zx": "^7.1.1"
   },
@@ -40,7 +39,8 @@
     "eslint-plugin-n": "^15.6.0",
     "eslint-plugin-promise": "^6.1.1",
     "husky": "^8.0.2",
-    "lint-staged": "^13.1.0"
+    "lint-staged": "^13.1.0",
+    "tsup": "^6.5.0"
   },
   "files": [
     "dist",
