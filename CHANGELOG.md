@@ -1,3 +1,9 @@
+# 1.1.0
+
+## Feats
+
+- feat: More friendly output.
+
 # 1.0.2
 
 ## Fixes

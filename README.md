@@ -7,7 +7,7 @@
   <img alt="Publish Package" src="https://github.com/emosheeep/circular-dependency-scanner/actions/workflows/npm-publish.yml/badge.svg">
   <img alt="npm downloads" src="https://img.shields.io/npm/dt/circular-dependency-scanner">
   <img alt="license" src="https://img.shields.io/npm/l/circular-dependency-scanner">
-  <img alt="bundle size" src="https://img.shields.io/bundlephobia/minzip/circular-dependency-scanner">
+  <img alt="stars" src="https://img.shields.io/github/stars/emosheeep/circular-dependency-scanner">
 </div>
 
 Out-of-box circular dependencies detector, with both JavaScript API and Command Line Tool built in, support all file types we used in common like `.js,.jsx,.ts,.tsx,.mjs,.cjs,.vue`.
@@ -22,6 +22,16 @@ English | [中文](./README.zh_CN.md)
 - 💡 Friendly Command Line Tool.
 - 🛠️ Fully Typed JavaScript APIs and Prompts.
 - 🌩 Tiny, Pretty, Fast and Reliable.
+
+# Example
+
+Here the running example for the `ds -o circles.json` execution:
+
+<img alt="cli.gif" src="./snapshots/cli.gif" width="600" />
+
+The `ts,js,vue` files will be printed directly into console as `blue,yellow,green` as follows if you didn't pass an output filename param:
+
+<img alt="output-snapshot" src="./snapshots/output.png" width="600" />
 
 # Motivation
 
@@ -59,14 +69,9 @@ ds src # detect src directory...and so on.
 ds --filter 'src/router/*.ts' # only print the circles matched the pattern.
 ds --absolute # print absolute path.
 ds --ignore output dist node_modules # path to ignore.
+ds --output circles.json # output analysis into specified file.
 ds --alias @:src @components:src/components # path alias, follows `<from>:<to>` convention
 ```
-
-## Snapshot
-
-The `ts,js,vue` files will be printed as `blue,yellow,green` as follows:
-
-<img alt="output-snapshot" src="./snapshots/output.png" width="600" />
 
 # JavaScript API
 
@@ -100,7 +105,9 @@ const results = circularDepsDetect({
 
 ```
 
-# Which reference will be pull out from the files
+# QA
+
+## Which reference will be pull out from the files
 
 This source code is here [src/ast.ts](https://github.com/emosheeep/circular-dependency-scanner/blob/HEAD/src/ast.ts). In a short, it find reference like: 
 
@@ -114,6 +121,12 @@ export { test }; // got no export source
 ```
 
 If some of the circles it found make no sense, you can use `--filter` option to screen out.
+
+## Running at monorepo
+
+The analysis of file reference depend on the `alias` configurations you have supplied. So if you run this command at your monorepo root directory, you may find that some of the different projects under may include same alias configurations, which cause the results unreliable.
+
+**If you want to analyze multiple projects, please execute one by one**.
 
 # Reference
 

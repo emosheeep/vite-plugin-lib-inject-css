@@ -61,25 +61,20 @@ export async function circularDepsDetect(options: DetectOptions): Promise<string
 
   const runner = new Listr<TaskCtx>([
     {
-      title: `Detecting files with ${chalk.underline.cyan(globPattern)}`,
-      task: async (_, task) => task.newListr(
-        [
-          {
-            title: 'Waiting...',
-            task: async (ctx, task) => {
-              const files = await callWorker({
-                exec: 'glob-files',
-                pattern: globPattern,
-                cwd,
-                ignore,
-              });
-              task.title = `${chalk.cyan(files.length)} files were detected.`;
-              ctx.files = files;
-            },
-          },
-        ],
-        { rendererOptions: { collapse: false } },
-      ),
+      title: `Globbing files with ${chalk.underline.cyan(globPattern)}`,
+      task: async (_, task) => task.newListr([{
+        title: 'Wait a moment...',
+        task: async (ctx, task) => {
+          const files = await callWorker({
+            exec: 'glob-files',
+            pattern: globPattern,
+            cwd,
+            ignore,
+          });
+          task.title = `${chalk.cyan(files.length)} files were detected.`;
+          ctx.files = files;
+        },
+      }]),
     },
     {
       title: 'Pulling out import specifiers from files...',
@@ -100,14 +95,23 @@ export async function circularDepsDetect(options: DetectOptions): Promise<string
     },
     {
       title: 'Analyzing circular dependencies...',
-      task: async (ctx) => {
-        ctx.result = await callWorker({
-          exec: 'analyze',
-          entries: ctx.entries,
-        });
-      },
+      task: async (_, task) => task.newListr([{
+        title: 'Wait a moment...',
+        task: async (ctx, task) => {
+          ctx.result = await callWorker({
+            exec: 'analyze',
+            entries: ctx.entries,
+          });
+          task.title = `${chalk.cyan(ctx.result.length)} circles were found.`;
+        },
+      }]),
     },
-  ]);
+  ], {
+    rendererOptions: {
+      showTimer: true,
+      collapse: false,
+    },
+  });
 
   await runner.run(ctx);
 

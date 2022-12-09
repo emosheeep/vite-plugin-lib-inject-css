@@ -7,7 +7,7 @@
   <img alt="Publish Package" src="https://github.com/emosheeep/circular-dependency-scanner/actions/workflows/npm-publish.yml/badge.svg">
   <img alt="npm downloads" src="https://img.shields.io/npm/dt/circular-dependency-scanner">
   <img alt="license" src="https://img.shields.io/npm/l/circular-dependency-scanner">
-  <img alt="bundle size" src="https://img.shields.io/bundlephobia/minzip/circular-dependency-scanner">
+  <img alt="stars" src="https://img.shields.io/github/stars/emosheeep/circular-dependency-scanner">
 </div>
 
 开箱即用循环依赖检测器，内置了 JavaScript API 和命令行工具两种使用方式，支持我们常用的所有文件类型，如 `.js，.jsx，.ts，.tsx，.mjs，.cjs，.vue`。 
@@ -22,6 +22,16 @@
 - 💡 提供命令行工具，同时具备友好的控制台输出。
 - 🛠️ 提供 JavaScript API，同时具备良好的类型提示。
 - 🌩 小巧、精致、快速、可靠。
+
+# 截图
+
+下图为运行 `ds -o circles.json` 的示例：
+
+<img alt="运行示例" src="./snapshots/cli.gif" width="600" />
+
+如果你没有传递 `output` 选项，那么输出内容会直接打印到控制台，其中`ts,js,vue` 文件输出时对应 `蓝色,黄色,绿色`，如下所示：
+
+<img alt="output-snapshot" src="./snapshots/output.png" width="600" />
 
 # 动机
 
@@ -58,14 +68,9 @@ ds src # detect src directory...and so on.
 ds --filter 'src/router/*.ts' # only print the circles matched the pattern.
 ds --absolute # print absolute path.
 ds --ignore output dist node_modules # path to ignore.
+ds --output circles.json # output analysis into specified file.
 ds --alias @:src @components:src/components # path alias, follows `<from>:<to>` convention
 ```
-
-## Snapshot
-
-`ts,js,vue` 文件输出时对应 `蓝色,黄色,绿色`，如下所示：
-
-<img alt="output-snapshot" src="./snapshots/output.png" width="600" />
 
 # JavaScript API
 
@@ -99,9 +104,17 @@ const results = circularDepsDetect({
 
 ```
 
-# 那些引用会被提取出来？
+# QA
+
+## 那些引用会被提取出来
 
 源文件在这里 [src/ast.ts](https://github.com/emosheeep/circular-dependency-scanner/blob/HEAD/src/ast.ts). 简单来说，满足以下条件的引用路径会被摘取出来：
+
+## Monorepo 下运行
+
+对文件引用的分析依赖于您提供的别名（alias）配置。因此，如果您在 monorepo 根目录下运行此命令，您可能会发现**一些不同的项目可能包含相同的别名配置**，这将导致结果不可靠。 
+
+**如果你想分析多个项目，请逐个执行**。
 
 ```ts
 import test from './test'; // got './test'
