@@ -27,11 +27,11 @@ English | [中文](./README.zh_CN.md)
 
 Here the running example for the `ds -o circles.json` execution:
 
-<img alt="cli.gif" src="./snapshots/cli.gif" width="600" />
+<img alt="cli.gif" src="https://raw.githubusercontent.com/emosheeep/circular-dependency-scanner/HEAD/snapshots/cli.gif" width="600" />
 
 The `ts,js,vue` files will be printed directly into console as `blue,yellow,green` as follows if you didn't pass an output filename param:
 
-<img alt="output-snapshot" src="./snapshots/output.png" width="600" />
+<img alt="output-snapshot" src="https://raw.githubusercontent.com/emosheeep/circular-dependency-scanner/HEAD/snapshots/output.png" width="600" />
 
 # Motivation
 

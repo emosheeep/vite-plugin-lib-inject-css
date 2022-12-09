@@ -27,11 +27,11 @@
 
 下图为运行 `ds -o circles.json` 的示例：
 
-<img alt="运行示例" src="./snapshots/cli.gif" width="600" />
+<img alt="运行示例" src="https://raw.githubusercontent.com/emosheeep/circular-dependency-scanner/HEAD/snapshots/cli.gif" width="600" />
 
 如果你没有传递 `output` 选项，那么输出内容会直接打印到控制台，其中`ts,js,vue` 文件输出时对应 `蓝色,黄色,绿色`，如下所示：
 
-<img alt="output-snapshot" src="./snapshots/output.png" width="600" />
+<img alt="output-snapshot" src="https://raw.githubusercontent.com/emosheeep/circular-dependency-scanner/HEAD/snapshots/output.png" width="600" />
 
 # 动机
 

@@ -1,3 +1,9 @@
+# 1.1.1
+
+## docs
+
+- docs: Use remote image instead.
+
 # 1.1.0
 
 ## Feats
