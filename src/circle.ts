@@ -42,7 +42,7 @@ export async function circularDepsDetect(options: DetectOptions): Promise<string
 
   /* ----------- Parameters pre-handle start ----------- */
 
-  ignore = [...new Set([...ignore])];
+  ignore = [...new Set([...ignore, '**/node_modules/**'])];
 
   // convert alias to absolute path
   alias = Object.fromEntries(
@@ -55,7 +55,7 @@ export async function circularDepsDetect(options: DetectOptions): Promise<string
   const globPattern = `**/*.{${extensions.join(',')}}`;
 
   logger.info(`Working directory is ${chalk.underline.cyan(cwd)}`);
-  logger.warn(`Ignoring ${ignore.map(v => chalk.yellow(v)).join(',')}`);
+  logger.info(`Ignored paths: ${ignore.map(v => chalk.yellow(v)).join(',')}`);
 
   const ctx: TaskCtx = { entries: [], result: [], files: [] };
 

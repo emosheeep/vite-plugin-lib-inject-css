@@ -3,6 +3,7 @@
 ## docs
 
 - docs: Use remote image instead.
+- fix: JavaScript API didn't ignore node_modules by default.
 
 # 1.1.0
 
