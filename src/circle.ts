@@ -1,8 +1,9 @@
-import fg from 'fast-glob';
-import { path } from 'zx';
-import { analyzeGraph, type Edge } from 'graph-cycles';
-import { walkFile } from './ast';
-import { replaceAlias, pathRevert, extensions } from './utils';
+import { Listr } from 'listr2';
+import { chalk, path } from 'zx';
+import { type Edge, type FullAnalysisResult } from 'graph-cycles';
+import { logger } from './logger';
+import { extensions } from './utils';
+import { callWorker } from './worker';
 
 export interface DetectOptions {
   /**
@@ -27,15 +28,21 @@ export interface DetectOptions {
   alias: Record<string, string>;
 }
 
+interface TaskCtx {
+  files: string[];
+  entries: Edge[];
+  result: FullAnalysisResult['cycles'];
+}
+
 /**
  * Detect circles among dependencies.
  */
-export function circularDepsDetect(options: DetectOptions) {
+export async function circularDepsDetect(options: DetectOptions): Promise<string[][]> {
   let { cwd = process.cwd(), ignore = [], absolute = false, alias } = options;
 
   /* ----------- Parameters pre-handle start ----------- */
 
-  ignore = [...new Set([...ignore, '**/node_modules/**'])];
+  ignore = [...new Set([...ignore])];
 
   // convert alias to absolute path
   alias = Object.fromEntries(
@@ -45,32 +52,64 @@ export function circularDepsDetect(options: DetectOptions) {
 
   /* ------------ Parameters pre-handle end ------------ */
 
-  function getDeps(filename, source) {
-    const abPath = source.startsWith('.')
-      ? path.resolve(path.dirname(filename), source)
-      : replaceAlias(source, alias);
+  const globPattern = `**/*.{${extensions.join(',')}}`;
 
-    return pathRevert(abPath);
-  }
+  logger.info(`Working directory is ${chalk.underline.cyan(cwd)}`);
+  logger.warn(`Ignoring ${ignore.map(v => chalk.yellow(v)).join(',')}`);
 
-  // files matching with exts
-  const files = fg.sync(
-    `**/*.{${extensions.join(',')}}`,
-    { cwd, absolute: true, ignore },
-  );
+  const ctx: TaskCtx = { entries: [], result: [], files: [] };
 
-  // pull out import specifiers of files
-  const entries: Edge[] = [];
-  for (const filename of files) {
-    const deps: string[] = [];
-    const visitor = value => (value = getDeps(filename, value)) && deps.push(value);
-    walkFile(filename, { onExportFrom: visitor, onImportFrom: visitor });
-    entries.push(
-      absolute
-        ? [filename, deps]
-        : [path.relative(cwd, filename), deps.map(v => path.relative(cwd, v))],
-    );
-  }
+  const runner = new Listr<TaskCtx>([
+    {
+      title: `Detecting files with ${chalk.underline.cyan(globPattern)}`,
+      task: async (_, task) => task.newListr(
+        [
+          {
+            title: 'Waiting...',
+            task: async (ctx, task) => {
+              const files = await callWorker({
+                exec: 'glob-files',
+                pattern: globPattern,
+                cwd,
+                ignore,
+              });
+              task.title = `${chalk.cyan(files.length)} files were detected.`;
+              ctx.files = files;
+            },
+          },
+        ],
+        { rendererOptions: { collapse: false } },
+      ),
+    },
+    {
+      title: 'Pulling out import specifiers from files...',
+      options: { bottomBar: 1 },
+      task: async (ctx, task) => {
+        ctx.entries = await callWorker({
+          exec: 'pull-out',
+          cwd,
+          absolute,
+          alias,
+          files: ctx.files,
+        }, {
+          onProgress(filename, index, total) {
+            task.output = `${index + 1}/${total} - ${filename}`;
+          },
+        });
+      },
+    },
+    {
+      title: 'Analyzing circular dependencies...',
+      task: async (ctx) => {
+        ctx.result = await callWorker({
+          exec: 'analyze',
+          entries: ctx.entries,
+        });
+      },
+    },
+  ]);
 
-  return analyzeGraph(entries);
+  await runner.run(ctx);
+
+  return ctx.result;
 }

@@ -19,6 +19,7 @@ module.exports = defineConfig({
     indent: 'off',
     'comma-dangle': 'off',
     'operator-linebreak': 'off',
+    'n/no-callback-literal': 'off',
     'no-unused-expressions': 'off',
     'space-before-function-paren': 'off',
     '@typescript-eslint/no-var-requires': 'off',

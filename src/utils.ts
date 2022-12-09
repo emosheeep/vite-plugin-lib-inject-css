@@ -1,4 +1,4 @@
-import { chalk, fs } from 'zx';
+import { chalk, fs, path } from 'zx';
 
 export const extensions = ['js', 'ts', 'jsx', 'tsx', 'vue', 'mjs', 'cjs'] as const;
 export type Ext = (typeof extensions)[number];
@@ -34,6 +34,17 @@ export function pathRevert(origin: string) {
       if (fs.existsSync(result)) return result;
     }
   }
+}
+
+/**
+ * Get import specifiers's real path from file.
+ */
+export function getRealPathOfSpecifier(filename, specifiers, alias) {
+  const abPath = specifiers.startsWith('.')
+    ? path.resolve(path.dirname(filename), specifiers)
+    : replaceAlias(specifiers, alias);
+
+  return pathRevert(abPath);
 }
 
 const colorize = (filename: string) =>
