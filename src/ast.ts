@@ -85,7 +85,7 @@ export function walkFile(filename: string, visitor: Visitor = {}) {
  */
 export function walkScript(source: string, visitor: Visitor) {
   walkTsNode(
-    ts.createSourceFile('.virtual-filename.ts', source, ts.ScriptTarget.ESNext),
+    ts.createSourceFile('__virtual-filename.tsx', source, ts.ScriptTarget.ESNext),
     node => {
       visitor.onImportFrom && handleImportFrom(node, visitor.onImportFrom);
       visitor.onExportFrom && handleExportFrom(node, visitor.onExportFrom);
