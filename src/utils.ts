@@ -4,21 +4,26 @@ export const extensions = ['js', 'ts', 'jsx', 'tsx', 'vue', 'mjs', 'cjs'] as con
 export type Ext = (typeof extensions)[number];
 
 /**
- * Replace consecutive '/'s with one '/' in a common path.
+ * Remove trailing  '/' '\'
+ * @param {string} str
+ * @returns {string}
  */
-export const normalizePath = (path: string) => path.replaceAll(/\/+/g, '/');
+export const removeTrailingSlash = str =>
+  /[/\\]/.test(str)
+    ? removeTrailingSlash(str.slice(0, -1))
+    : str;
 
 /**
  * Replace alias with real path.
  * @param source - source path
  * @param alias - alias configurations
  */
-export function replaceAlias(source, alias) {
+export function replaceAlias(source: string, alias: Record<string, string>) {
   for (const [from, to] of Object.entries(alias)) {
     if (source.startsWith('.')) return source;
     if (source === from) return to;
-    if (source.startsWith(`${from}/`)) {
-      return normalizePath(`${to}/${source.slice(from.length)}`);
+    if (source.startsWith(path.join(from, '/'))) {
+      return path.join(to, source.slice(from.length));
     }
   }
   return source;
@@ -27,10 +32,13 @@ export function replaceAlias(source, alias) {
 /**
  * Autocompletion for path suffixes.
  */
-export function pathRevert(origin: string) {
+export function revertExtension(origin) {
   if (fs.existsSync(origin) && !fs.statSync(origin).isDirectory()) return origin;
   for (const ext of extensions) {
-    for (const result of [`${origin}.${ext}`, `${origin}/index.${ext}`]) {
+    for (const result of [
+      `${removeTrailingSlash(origin)}.${ext}`,
+      path.join(origin, `index.${ext}`),
+    ]) {
       if (fs.existsSync(result)) return result;
     }
   }
@@ -39,12 +47,16 @@ export function pathRevert(origin: string) {
 /**
  * Get import specifiers's real path from file.
  */
-export function getRealPathOfSpecifier(filename, specifiers, alias) {
-  const abPath = specifiers.startsWith('.')
-    ? path.resolve(path.dirname(filename), specifiers)
-    : replaceAlias(specifiers, alias);
-
-  return pathRevert(abPath);
+export function getRealPathOfSpecifier(
+  filename: string,
+  specifier: string,
+  alias: Record<string, string>,
+) {
+  return revertExtension(
+    specifier.startsWith('.')
+      ? path.resolve(path.dirname(filename), specifier)
+      : replaceAlias(specifier, alias),
+  );
 }
 
 const colorize = (filename: string) =>
