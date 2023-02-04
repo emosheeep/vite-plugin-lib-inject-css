@@ -6,12 +6,6 @@ import fastglob from 'fast-glob';
 import { walkFile } from './ast';
 import { getRealPathOfSpecifier } from './utils';
 
-declare module 'worker_threads' {
-  interface MessagePort {
-    postMessage<T>(value: T)
-  }
-}
-
 interface GlobFiles {
   exec: 'glob-files';
   pattern: string;
@@ -19,7 +13,7 @@ interface GlobFiles {
   cwd: string;
 }
 
-type PullOutProgressCallback = (filename: string, index: number, total: number) => void;
+type ProgressCallback = (filename: string, index: number, total: number) => void;
 
 interface PullOut {
   exec: 'pull-out';
@@ -39,7 +33,7 @@ type ExecType = WorkerData['exec'];
 
 interface WorkerOptionsMap {
   'pull-out': {
-    onProgress?: PullOutProgressCallback;
+    onProgress?: ProgressCallback;
   }
 }
 
@@ -56,27 +50,10 @@ interface WorkerOutput {
 
 type WorkerEvent<T extends Record<string, any>> = { [K in keyof T]: { type: K; value: T[K] }}[keyof T];
 
-type MessageEventOrigin = {
-  [name in keyof WorkerOutput]: WorkerEvent<{ finish: WorkerOutput[name]; }>
-};
-
-interface MessageEventExtra {
-  'pull-out': WorkerEvent<{
-    progress: Parameters<PullOutProgressCallback>
-  }>
-}
-
-type MessageEvent<T extends ExecType> =
-  T extends keyof MessageEventOrigin
-    ? T extends keyof MessageEventExtra
-      ? MessageEventOrigin[T] | MessageEventExtra[T]
-      : MessageEventOrigin[T]
-    : never;
-
 if (!isMainThread) {
   const data: WorkerData = workerData;
   if (data.exec === 'glob-files') {
-    parentPort?.postMessage<MessageEvent<'glob-files'>>({
+    postMessage<WorkerEvent<{ finish: string[] }>>({
       type: 'finish',
       value: fastglob.sync(data.pattern, {
         absolute: true,
@@ -87,14 +64,17 @@ if (!isMainThread) {
   } else if (data.exec === 'pull-out') {
     const { files, cwd, absolute, alias } = data;
     const entries: Edge[] = [];
-    type ParamType = MessageEvent<'pull-out'>;
+    type ParamType = WorkerEvent<{
+      finish: Edge[],
+      onProgress: Parameters<ProgressCallback>
+    }>;
 
     for (let i = 0; i < files.length; i++) {
       const filename = files[i];
       const relFileName = path.relative(cwd, filename);
 
-      parentPort?.postMessage<ParamType>({
-        type: 'progress',
+      postMessage<ParamType>({
+        type: 'onProgress',
         value: [relFileName, i, files.length],
       });
 
@@ -107,15 +87,22 @@ if (!isMainThread) {
           : [relFileName, deps.map(v => path.relative(cwd, v))],
       );
     }
-    parentPort?.postMessage<ParamType>({ type: 'finish', value: entries });
+    postMessage<ParamType>({ type: 'finish', value: entries });
   } else if (data.exec === 'analyze') {
-    parentPort?.postMessage<MessageEvent<'analyze'>>({
+    postMessage<WorkerEvent<{ finish: WorkerOutput['analyze'] }>>({
       type: 'finish',
       value: analyzeGraph(data.entries).cycles,
     });
   } else {
     throw new Error('Type error with `exec`');
   }
+}
+
+/**
+ * Wrapped postMessage function, provide type hints
+ */
+function postMessage<T>(data: T) {
+  parentPort?.postMessage(data);
 }
 
 export function callWorker<
@@ -128,12 +115,12 @@ export function callWorker<
       { workerData },
     );
     worker.on('error', reject);
-    worker.on('message', (data: MessageEvent<E>) => {
+    worker.on('message', (data) => {
       if (data.type === 'finish') {
-        resolve(data.value as WorkerOutput[E]);
+        resolve(data.value);
         worker.terminate();
       } else if (data.type === 'progress') {
-        options?.onProgress?.(...data.value);
+        options?.[data.type]?.(...data.value);
       }
     });
   });
