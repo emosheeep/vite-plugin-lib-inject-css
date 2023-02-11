@@ -32,7 +32,6 @@ importers:
       '@vue/compiler-sfc': ^3.2.45
       commander: ^9.4.1
       eslint: ^8.29.0
-      fast-glob: ^3.2.12
       graph-cycles: ^2.0.1
       listr2: ^5.0.6
       minimatch: ^5.1.1
@@ -42,7 +41,6 @@ importers:
     dependencies:
       '@vue/compiler-sfc': 3.2.45
       commander: 9.5.0
-      fast-glob: 3.2.12
       graph-cycles: 2.0.1
       listr2: 5.0.6
       minimatch: 5.1.6

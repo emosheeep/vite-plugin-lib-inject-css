@@ -1,9 +1,9 @@
 {
   "name": "circular-dependency-scanner",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "type": "module",
   "description": "Out-of-box and zero configuration circular dependencies detector, with both JavaScript API and Command Line Tool.",
-  "packageManager": "pnpm@7.17.1",
+  "packageManager": "pnpm@7.27.0",
   "license": "MIT",
   "bin": {
     "ds": "bin/ds.js"
@@ -20,7 +20,6 @@
   "dependencies": {
     "@vue/compiler-sfc": "^3.2.45",
     "commander": "^9.4.1",
-    "fast-glob": "^3.2.12",
     "graph-cycles": "^2.0.1",
     "listr2": "^5.0.6",
     "minimatch": "^5.1.1",

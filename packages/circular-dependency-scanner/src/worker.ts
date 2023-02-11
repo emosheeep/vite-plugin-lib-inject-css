@@ -1,8 +1,7 @@
 import { workerData, parentPort, Worker, isMainThread } from 'worker_threads';
 import { type Edge, analyzeGraph, FullAnalysisResult } from 'graph-cycles';
-import { path } from 'zx';
+import { path, globby } from 'zx';
 import { fileURLToPath } from 'url';
-import fastglob from 'fast-glob';
 import { walkFile } from './ast';
 import { getRealPathOfSpecifier } from './utils';
 
@@ -55,7 +54,7 @@ if (!isMainThread) {
   if (data.exec === 'glob-files') {
     postMessage<WorkerEvent<{ finish: string[] }>>({
       type: 'finish',
-      value: fastglob.sync(data.pattern, {
+      value: globby.globbySync(data.pattern, {
         absolute: true,
         cwd: data.cwd,
         ignore: data.ignore,
