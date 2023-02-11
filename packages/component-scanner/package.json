@@ -1,0 +1,58 @@
+{
+  "name": "component-scanner",
+  "version": "1.0.2",
+  "description": "Cross-framework and simple web system component scanner, support vue(html, pug template), react, jsx, tsx, help counting component usage.",
+  "author": "秦旭洋 <emosheeep@qq.com>",
+  "type": "module",
+  "main": "dist/index.js",
+  "packageManager": "pnpm@7.25.0",
+  "license": "MIT",
+  "homepage": "https://github.com/emosheeep/fe-tools/tree/HEAD/packages/component-scanner#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/emosheeep/fe-tools",
+    "directory": "packages/component-scanner"
+  },
+  "files": [
+    "dist",
+    "CHANGELOG.md",
+    "README.md"
+  ],
+  "keywords": [
+    "ast",
+    "vue",
+    "react",
+    "html",
+    "pug",
+    "web",
+    "jsx",
+    "tsx",
+    "javascript",
+    "ecmascript",
+    "scanner",
+    "detector"
+  ],
+  "scripts": {
+    "prepublishOnly": "npm run build",
+    "dev": "tsup --watch",
+    "build": "tsup && eslint . --ext .js,.ts",
+    "lint": "eslint . --fix --ext .js,.ts"
+  },
+  "dependencies": {
+    "@vue/compiler-sfc": "^3.2.45",
+    "change-case": "^4.1.2",
+    "html-parser": "^0.11.0",
+    "listr2": "^5.0.6",
+    "pug-lexer": "^5.0.1",
+    "pug-parser": "^6.0.0",
+    "pug-walk": "^2.0.0",
+    "typescript": "^4.9.4",
+    "zx": "^7.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.18",
+    "eslint": "^8.32.0",
+    "husky": "^8.0.3",
+    "tsup": "^6.5.0"
+  }
+}

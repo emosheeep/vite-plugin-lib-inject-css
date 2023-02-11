@@ -115,7 +115,7 @@ export function callWorker<
       { workerData },
     );
     worker.on('error', reject);
-    worker.on('message', (data) => {
+    worker.on('message', data => {
       if (data.type === 'finish') {
         resolve(data.value);
         worker.terminate();

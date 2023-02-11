@@ -9,7 +9,6 @@ module.exports = defineConfig({
     'standard',
     'plugin:@typescript-eslint/recommended',
   ],
-  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
@@ -17,10 +16,9 @@ module.exports = defineConfig({
   rules: {
     semi: 'off',
     indent: 'off',
+    'arrow-parens': ['error', 'as-needed'],
     'comma-dangle': 'off',
-    'operator-linebreak': 'off',
     'n/no-callback-literal': 'off',
-    'no-unused-expressions': 'off',
     'space-before-function-paren': 'off',
     '@typescript-eslint/no-var-requires': 'off',
     '@typescript-eslint/no-explicit-any': 'off',

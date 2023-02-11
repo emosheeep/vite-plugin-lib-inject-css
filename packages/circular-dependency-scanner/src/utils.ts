@@ -19,8 +19,8 @@ export const removeTrailingSlash = str =>
  * @param alias - alias configurations
  */
 export function replaceAlias(source: string, alias: Record<string, string>) {
+  if (source.startsWith('.') || path.isAbsolute(source)) return source;
   for (const [from, to] of Object.entries(alias)) {
-    if (source.startsWith('.')) return source;
     if (source === from) return to;
     if (source.startsWith(path.join(from, '/'))) {
       return path.join(to, source.slice(from.length));

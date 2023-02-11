@@ -1,3 +1,6 @@
+# 1.1.2
+
+- docs: migrate to monorepo, replace relevant url
 # 1.1.1
 
 ## docs
