@@ -1,76 +1,24 @@
 {
-  "name": "circular-dependency-scanner",
-  "version": "1.1.1",
-  "type": "module",
-  "description": "Out-of-box and zero configuration circular dependencies detector, with both JavaScript API and Command Line Tool.",
-  "packageManager": "pnpm@7.17.1",
+  "name": "@emo/fe-tools",
+  "private": true,
+  "description": "This is a monorepo for front end tools.",
+  "author": "秦旭洋 <emosheep@qq.com>",
   "license": "MIT",
-  "bin": {
-    "ds": "bin/ds.js"
-  },
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "packageManager": "pnpm@7.27.0",
   "scripts": {
     "prepare": "husky install",
-    "prepublishOnly": "npm run build",
-    "lint": "eslint . --fix --ext .js,.ts",
-    "build": "tsup",
-    "watch": "tsup --watch",
-    "ds": "node bin/ds.js"
-  },
-  "dependencies": {
-    "@vue/compiler-sfc": "^3.2.45",
-    "commander": "^9.4.1",
-    "fast-glob": "^3.2.12",
-    "graph-cycles": "^2.0.1",
-    "listr2": "^5.0.6",
-    "minimatch": "^5.1.1",
-    "typescript": "^4.9.4",
-    "zx": "^7.1.1"
+    "lint": "eslint . --fix --ext .js,.ts"
   },
   "devDependencies": {
-    "@types/node": "^18.11.12",
-    "@typescript-eslint/eslint-plugin": "^5.46.0",
-    "@typescript-eslint/parser": "^5.46.0",
-    "eslint": "^8.29.0",
+    "@typescript-eslint/eslint-plugin": "^5.49.0",
+    "@typescript-eslint/parser": "^5.49.0",
+    "eslint": "^8.32.0",
     "eslint-config-standard": "^17.0.0",
-    "eslint-define-config": "^1.12.0",
-    "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-n": "^15.6.0",
+    "eslint-define-config": "^1.14.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-n": "^15.6.1",
     "eslint-plugin-promise": "^6.1.1",
-    "husky": "^8.0.2",
-    "lint-staged": "^13.1.0",
-    "tsup": "^6.5.0"
-  },
-  "files": [
-    "dist",
-    "types",
-    "CHANGELOG.md",
-    "README.md",
-    "README.zh_CN.md"
-  ],
-  "author": {
-    "name": "秦旭洋",
-    "email": "emosheeep@qq.com"
-  },
-  "homepage": "https://github.com/emosheeep/circular-dependency-scanner#readme",
-  "repository": {
-    "type": "github",
-    "url": "https://github.com/emosheeep/circular-dependency-scanner"
-  },
-  "bugs": {
-    "url": "https://github.com/emosheeep/circular-dependency-scanner/issues"
-  },
-  "keywords": [
-    "circular",
-    "scanner",
-    "detector",
-    "circles",
-    "cyclic",
-    "ast",
-    "javascript",
-    "ecmascript",
-    "circular-dependency",
-    "cli"
-  ]
+    "husky": "^8.0.3",
+    "typescript": "^4.9.4"
+  }
 }
