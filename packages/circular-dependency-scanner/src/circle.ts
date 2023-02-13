@@ -54,7 +54,7 @@ export async function circularDepsDetect(options: DetectOptions): Promise<string
 
   const globPattern = `**/*.{${extensions.join(',')}}`;
 
-  logger.info(`Working directory is ${chalk.underline.cyan(cwd)}`);
+  logger.info(`Working directory is ${chalk.underline.cyan(path.resolve(cwd))}`);
   logger.info(`Ignored paths: ${ignore.map(v => chalk.yellow(v)).join(',')}`);
 
   const ctx: TaskCtx = { entries: [], result: [], files: [] };

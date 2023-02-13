@@ -9,7 +9,7 @@ export type Ext = (typeof extensions)[number];
  * @returns {string}
  */
 export const removeTrailingSlash = str =>
-  /[/\\]/.test(str)
+  /[/\\]$/.test(str)
     ? removeTrailingSlash(str.slice(0, -1))
     : str;
 
@@ -32,7 +32,7 @@ export function replaceAlias(source: string, alias: Record<string, string>) {
 /**
  * Autocompletion for path suffixes.
  */
-export function revertExtension(origin) {
+export function revertExtension(origin: string) {
   if (fs.existsSync(origin) && !fs.statSync(origin).isDirectory()) return origin;
   for (const ext of extensions) {
     for (const result of [

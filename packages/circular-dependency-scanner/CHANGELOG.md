@@ -1,6 +1,11 @@
+# 1.1.3
+
+- fix(circular): trailing slash removing error
+
 # 1.1.2
 
 - docs: migrate to monorepo, replace relevant url
+
 # 1.1.1
 
 ## docs
