@@ -1,0 +1,63 @@
+{
+  "name": "vite-plugin-lib-inject-css",
+  "version": "1.0.0",
+  "description": "Inject css at the top of chunk file in lib mode using `import` statement, support multiple entries.",
+  "author": "秦旭洋 <emosheep@qq.com>",
+  "packageManager": "pnpm@7.30.1",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "homepage": "https://github.com/emosheeep/fe-tools/tree/HEAD/packages/vite-plugin-lib-inject-css#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/emosheeep/fe-tools",
+    "directory": "packages/vite-plugin-lib-inject-css"
+  },
+  "keywords": [
+    "vite",
+    "plugin",
+    "lib",
+    "build",
+    "vite-lib",
+    "vite-plugin",
+    "vite-build",
+    "css",
+    "style",
+    "styles",
+    "inject",
+    "inline"
+  ],
+  "scripts": {
+    "prepublishOnly": "npm run build",
+    "dev": "vite build --watch",
+    "build": "vite build",
+    "lint": "eslint . --ext .ts,.js"
+  },
+  "dependencies": {
+    "magic-string": "^0.30.0",
+    "picocolors": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.15.7",
+    "eslint": "^8.36.0",
+    "typescript": "^4.9.4",
+    "vite": "^4.2.1",
+    "vite-plugin-checker": "^0.5.6",
+    "vite-plugin-dts": "^2.1.0",
+    "vite-plugin-externalize-deps": "^0.5.0"
+  },
+  "peerDependencies": {
+    "vite": "*"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "strict": true,
+    "jsx": "preserve",
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": false,
+    "outDir": "dist",
+    "baseUrl": ".",
+    "types": [
+      "node"
+    ],
+    "lib": [
+      "esnext",
+    ],
+  },
+  "include": [
+    "**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+  ]
+}
