@@ -9,21 +9,6 @@ type LibOptions = LibraryOptions & Pick<BuildOptions, 'rollupOptions'>;
 const prefix = color.cyan('[vite:lib-inject-css]:');
 
 /**
- * Help to generate lib entry object with similar directory structure.
- * @param entryDirs directories to scan.
- * @returns lib entry object
- */
-export function scanEntries(entryDirs: string[]) {
-  const entries: Record<string, string> = {};
-  for (const dirname of entryDirs) {
-    for (const subtitle of fs.readdirSync(dirname)) {
-      entries[subtitle] = path.resolve(dirname, subtitle);
-    }
-  }
-  return entries;
-}
-
-/**
  * Inject css at the top of each generated chunk file, only works with library mode.
  * @param libOptions Optional libOptions which will overwrite the relevant options.
  */
@@ -75,4 +60,40 @@ export function libInjectCss(libOptions?: LibOptions): Plugin {
       };
     },
   };
+}
+
+/**
+ * Help to generate lib entry object with similar directory structure.
+ * 1. **If it is a file**, use filename without extension as entry name
+ * 2. **If it is a directory**, assumes 'src/components', it will scan files under, then use `'src/components/xxx/index'` as entry and `'xxx'` as its name.
+ * @param entryDirs directories to scan.
+ * @returns lib entry object
+ * @example
+ * ```javascript
+ * scanEntries([
+ *   'src/index.ts',
+ *   'src/components',
+ * ])
+ * ```
+ */
+export function scanEntries(entryDirs: string | string[]) {
+  const entries: Record<string, string> = {};
+  const counter: Record<string, number> = {};
+
+  for (const entryDir of [entryDirs].flat()) {
+    if (!entryDir) break;
+
+    const flattenEntries = fs.statSync(entryDir).isDirectory()
+      ? fs.readdirSync(entryDir).map(v => path.resolve(entryDir, v))
+      : [entryDir];
+
+    for (const entry of flattenEntries) {
+      const { name } = path.parse(entry);
+      const entryIndex = counter[name] || 0;
+      entries[`${name}${entryIndex || ''}`] = entry;
+      counter[name] = entryIndex + 1;
+    }
+  }
+
+  return entries;
 }

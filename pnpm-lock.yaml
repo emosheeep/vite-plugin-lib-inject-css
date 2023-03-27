@@ -82,27 +82,6 @@ importers:
       husky: 8.0.3
       tsup: 6.5.0_typescript@4.9.4
 
-  packages/vite-plugin-lib-css:
-    specifiers:
-      '@types/node': ^18.15.7
-      eslint: ^8.36.0
-      magic-string: ^0.30.0
-      typescript: ^4.9.4
-      vite: ^4.2.1
-      vite-plugin-checker: ^0.5.6
-      vite-plugin-dts: ^2.1.0
-      vite-plugin-externalize-deps: ^0.5.0
-    dependencies:
-      magic-string: 0.30.0
-    devDependencies:
-      '@types/node': 18.15.7
-      eslint: 8.36.0
-      typescript: 4.9.4
-      vite: 4.2.1_@types+node@18.15.7
-      vite-plugin-checker: 0.5.6_ag3umzbhez4bgxfvo2izr4tgvi
-      vite-plugin-dts: 2.1.0_jqrar7a2ahsya6kgd36x5plsiu
-      vite-plugin-externalize-deps: 0.5.0_vite@4.2.1
-
   packages/vite-plugin-lib-inject-css:
     specifiers:
       '@types/node': ^18.15.7
@@ -125,25 +104,6 @@ importers:
       vite-plugin-checker: 0.5.6_ag3umzbhez4bgxfvo2izr4tgvi
       vite-plugin-dts: 2.1.0_jqrar7a2ahsya6kgd36x5plsiu
       vite-plugin-externalize-deps: 0.5.0_vite@4.2.1
-
-  packages/vite-plugin-lib-inline-css:
-    specifiers:
-      '@types/node': ^18.15.7
-      eslint: ^8.36.0
-      magic-string: ^0.30.0
-      typescript: ^4.9.4
-      vite: ^4.2.1
-      vite-plugin-checker: ^0.5.6
-      vite-plugin-dts: ^2.1.0
-    dependencies:
-      magic-string: 0.30.0
-    devDependencies:
-      '@types/node': 18.15.7
-      eslint: 8.36.0
-      typescript: 4.9.4
-      vite: 4.2.1_@types+node@18.15.7
-      vite-plugin-checker: 0.5.6_ag3umzbhez4bgxfvo2izr4tgvi
-      vite-plugin-dts: 2.1.0_jqrar7a2ahsya6kgd36x5plsiu
 
 packages:
 

@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-lib-inject-css",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Inject css at the top of chunk file in lib mode using `import` statement, support multiple entries.",
   "author": "秦旭洋 <emosheep@qq.com>",
   "packageManager": "pnpm@7.30.1",
@@ -16,7 +16,8 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "CHANGELOG.md"
   ],
   "homepage": "https://github.com/emosheeep/fe-tools/tree/HEAD/packages/vite-plugin-lib-inject-css#readme",
   "repository": {
