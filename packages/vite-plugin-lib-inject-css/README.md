@@ -73,6 +73,20 @@ export default defineConfig({
 })
 ```
 
+# Attentions
+
+Here's current status within vite:
+
+- When `cssCodeSplit` is `false`, all of css code will be collected into a standalone css file named `style.css`.
+
+- When `build.rollupOptions.output.preserveModules` is `true`, the association between a chunk and the css it referenced will lose for some reason.
+
+Due to the **internal implementation**, we have to make some trade-offs, ensure `cssCodeSplit: true` and `preserveModules: false`. 
+
+The former([cssCodeSpilt](https://vitejs.dev/config/build-options.html#build-csscodesplit)), as we know,  is `false` by default in library mode, but we reset it to `true` in this plugin. The latter are not modified.
+
+If the output result doesn't meet your needs, please check the values mentioned above are not set incorrectly.
+
 # Motivation
 
 Vite shines in Web project development, but it can also be used for library projects.
