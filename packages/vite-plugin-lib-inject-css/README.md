@@ -28,65 +28,6 @@ Note that this plugin only works with [library-mode](https://vitejs.dev/guide/bu
 - ⚡️ Sourcemap support.
 - 🛠 Out-of-box, tiny and pretty.
 
-# Usage
-
-Install:
-
-
-```shell
-pnpm i vite-plugin-lib-inject-css -D # npm/yarn
-```
-
-Config:
-
-```js
-// vite.config.ts
-import { libInjectCss, scanEntries } from 'vite-plugin-lib-inject-css';
-
-// https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [
-    libInjectCss(), // For a simple usage
-    // Parameters are optional, which is only an alias, aim to make configs concise.
-    libInjectCss({
-      format: ['es'],
-      entry: {
-        index: 'src/index.ts', // Don't forget the main entry!
-        button: 'src/components/button/index.ts',
-        select: 'src/components/select/index.ts',
-        // Uses with a similar directory structure.
-        ...scanEntries([
-          'src/components',
-          'src/hooks',
-        ])
-      },
-      rollupOptions: {
-        output: {
-          // Put chunk files at <output>/chunks
-          chunkFileNames: 'chunks/[name].[hash].js',
-          // Put chunk styles at <output>/styles
-          assetFileNames: 'assets/[name][extname]',
-        },
-      },
-    }),
-  ],
-})
-```
-
-# Attentions
-
-Here's current status within vite:
-
-- When `cssCodeSplit` is `false`, all of css code will be collected into a standalone css file named `style.css`.
-
-- When `build.rollupOptions.output.preserveModules` is `true`, the association between a chunk and the css it referenced will lose for some reason.
-
-Due to the **internal implementation**, we have to make some trade-offs, ensure `cssCodeSplit: true` and `preserveModules: false`. 
-
-The former([cssCodeSpilt](https://vitejs.dev/config/build-options.html#build-csscodesplit)), as we know,  is `false` by default in library mode, but we reset it to `true` in this plugin. The latter are not modified.
-
-If the output result doesn't meet your needs, please check the values mentioned above are not set incorrectly.
-
 # Motivation
 
 Vite shines in Web project development, but it can also be used for library projects.
@@ -128,6 +69,102 @@ we can get which resource files(include CSS files) are associated with current c
 Based on these, we can inject styles by using plugin hook [renderChunk](https://rollupjs.org/plugin-development/#renderchunk), which is the simplest and most effective way.
 
 Prefer to check source code to get more information.
+
+# Usage
+
+Install:
+
+
+```shell
+pnpm i vite-plugin-lib-inject-css -D # npm/yarn
+```
+
+Config:
+
+```js
+// vite.config.ts
+import { libInjectCss, scanEntries } from 'vite-plugin-lib-inject-css';
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [
+    libInjectCss(), // For a simple usage
+    // Parameters are optional, which is only an alias, aim to make configs concise.
+    libInjectCss({
+      format: ['es'],
+      entry: {
+        index: 'src/index.ts', // Don't forget the main entry!
+        button: 'src/components/button/index.ts',
+        select: 'src/components/select/index.ts',
+        // Uses with a similar directory structure.
+        ...scanEntries([
+          'src/components',
+          'src/hooks',
+        ])
+      },
+      rollupOptions: {
+        output: {
+          // Put chunk files at <output>/chunks
+          chunkFileNames: 'chunks/[name].[hash].js',
+          // Put chunk styles at <output>/styles
+          assetFileNames: 'assets/[name][extname]',
+        },
+      },
+      build: {
+        emptyOutDir: false,
+        // ...
+      }
+    }),
+  ],
+})
+```
+
+# Attentions
+
+## Why does style code injection fail?
+
+Here're some possible reasons:
+
+- When `build.cssCodeSplit` is `false`, all of css code will be collected into a standalone css file named `style.css`, **style injection will be skipped**.
+
+- When `rollupOptions.output.preserveModules` is `true`, the association between a chunk and the css it referenced will lose for some reason, in which case **style injection will be skipped**.
+
+Due to the **internal implementation**, we have to make some trade-offs:
+
+```js
+{
+  build: {
+    cssCodeSplit: true, // Required. This is set internally by default.
+  },
+  rollupOptions: {
+    output: {
+      preserveModules: false, // Required. This is rollup's default behavior, you'll get a warn message if you set `true`.
+    }
+  }
+}
+```
+## Why do additional empty imports turn up in entry chunks?
+
+When using **multiple** chunks, imports of dependencies of entry chunks will be added as empty imports to the entry chunks themselves. This is rollup's default behavior **in order for javascript engine performance optimizations**, you can turn it off via `output.hoistTransitiveImports: false`.
+
+Here's an example:
+
+```js
+// dist/demo.js
+import { _ as p } from "../chunks/demo.js";
+import "vue";
+import "axios";
+import "lodash-es";
+import "xxx"; // ... and so on.
+export {
+  p as Demo
+};
+```
+
+Further, see [why-do-additional-imports-turn-up-in-my-entry-chunks-when-code-splitting](https://rollupjs.org/faqs/#why-do-additional-imports-turn-up-in-my-entry-chunks-when-code-splitting).
+
+As a third-part library, this behavior may cause sideEffects and make tree-shaking fail, so we set `hoistTransitiveImports: false` internally by default, you can still manually overwrite it.
+
 
 # Recipes
 
