@@ -9,4 +9,4 @@ This is a monorepo with series helpful tools designed for frond-ends. The source
 
 # Vite Ecosystem
 
-- [vite-plugin-lib-inject-css](https://github.com/emosheeep/fe-tools/tree/HEAD/packages/vite-plugin-lib-inject-css) - Inject css at the top of each chunk file in lib mode using `import` statement, support multiple entries.
+- [vite-plugin-lib-inject-css](https://github.com/emosheeep/fe-tools/tree/HEAD/packages/vite-plugin-lib-inject-css) - Inject css at the top of each chunk file in library mode using `import` statement, support multi-entries build, especially to help building component libraries.

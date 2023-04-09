@@ -9,7 +9,7 @@
 
 English | [简体中文](https://juejin.cn/post/7214374960192782373)
 
-Inject css at the top of each chunk file in lib mode using `import` statement like this:
+Inject css at the top of each chunk file in library mode using `import` statement, support multi-entries build, especially to help building component libraries.
 
 ```js
 // bundled js file, with import css at top (if any)
