@@ -39,20 +39,20 @@
     "lint": "eslint . --fix --ext .js,.ts"
   },
   "dependencies": {
-    "@vue/compiler-sfc": "^3.2.45",
+    "@vue/compiler-sfc": "^3.2.47",
     "change-case": "^4.1.2",
     "html-parser": "^0.11.0",
-    "listr2": "^5.0.6",
+    "listr2": "^5.0.8",
     "pug-lexer": "^5.0.1",
     "pug-parser": "^6.0.0",
     "pug-walk": "^2.0.0",
-    "typescript": "^4.9.4",
-    "zx": "^7.1.1"
+    "typescript": "^4.9.5",
+    "zx": "^7.2.1"
   },
   "devDependencies": {
-    "@types/node": "^18.11.18",
-    "eslint": "^8.32.0",
+    "@types/node": "^18.15.13",
+    "eslint": "^8.38.0",
     "husky": "^8.0.3",
-    "tsup": "^6.5.0"
+    "tsup": "^6.7.0"
   }
 }
