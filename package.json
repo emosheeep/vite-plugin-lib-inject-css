@@ -4,7 +4,7 @@
   "description": "This is a monorepo for front end tools.",
   "author": "秦旭洋 <emosheep@qq.com>",
   "license": "MIT",
-  "packageManager": "pnpm@7.27.0",
+  "packageManager": "pnpm@8.3.1",
   "scripts": {
     "prepare": "husky install",
     "lint": "eslint . --fix --ext .js,.ts"

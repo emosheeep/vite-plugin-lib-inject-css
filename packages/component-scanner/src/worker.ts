@@ -1,10 +1,8 @@
 import { workerData, parentPort, Worker, isMainThread } from 'worker_threads';
 import { path, globby } from 'zx';
 import { fileURLToPath } from 'url';
-import { camelCase, pascalCase, paramCase as kebabCase } from 'change-case';
-import { walkFile, type Visitor, NamedImports } from './ast-helper';
-
-export type NamingStyle = 'default' | 'PascalCase' | 'camelCase' | 'kebab-case';
+import { type NamingStyle, transformNamingStyle } from './utils';
+import { walkFile, type Visitor, NamedImports, WrapperContainer } from './ast-helper';
 
 interface GlobFiles {
   exec: 'glob-files';
@@ -19,6 +17,11 @@ interface ScanComponent {
   files: string[];
   libraryNames?: string[];
   namingStyle?: NamingStyle;
+}
+
+export interface ComponentDetail {
+  filename: string;
+  components: string[]
 }
 
 type WorkerData = GlobFiles | ScanComponent;
@@ -44,7 +47,7 @@ type WorkerOptions<T extends ExecType> =
 
 interface WorkerOutput {
   'glob-files': string[];
-  'scan-component': string[];
+  'scan-component': ComponentDetail[];
 }
 
 if (!isMainThread) {
@@ -60,10 +63,10 @@ if (!isMainThread) {
     });
   } else if (data.exec === 'scan-component') {
     const { files, cwd, libraryNames, namingStyle = 'default' } = data;
-    const components = new Set<string>();
+    const details: ComponentDetail[] = [];
 
     type EventParams = WorkerEvent<{
-      finish: string[];
+      finish: WorkerOutput['scan-component'];
       onProgress: Parameters<ProgressCallback>;
       onTag: Parameters<Visitor['onTag']>;
       onImport: Parameters<Visitor['onImport']>;
@@ -78,11 +81,14 @@ if (!isMainThread) {
         value: [relFileName, i, files.length],
       });
 
+      const detail: ComponentDetail = { filename: relFileName, components: [] };
+
       walkFile(filename, {
         onTag: name => {
+          if (name === WrapperContainer) return;
           name = transformNamingStyle(name, namingStyle);
           postMessage<EventParams>({ type: 'onTag', value: [name] });
-          components.add(name);
+          detail.components.push(name);
         },
         onImport: info => {
           if (info.default) {
@@ -102,16 +108,18 @@ if (!isMainThread) {
           if (libraryNames?.some(key => info.path.startsWith(key))) {
             info.named?.forEach(v => {
               // collect unaliased names as component
-              components.add(v.id);
+              detail.components.push(v.id);
             });
           }
         },
       });
+
+      details.push(detail);
     }
 
     postMessage<EventParams>({
       type: 'finish',
-      value: [...components],
+      value: details,
     });
   } else {
     throw new Error('Type error with `exec`');
@@ -123,17 +131,6 @@ if (!isMainThread) {
  */
 function postMessage<T>(data: T) {
   parentPort?.postMessage(data);
-}
-
-function transformNamingStyle(name: string, style: NamingStyle = 'default') {
-  if (!name) return name; // name is probably undefined
-  return style === 'kebab-case'
-    ? kebabCase(name)
-    : style === 'PascalCase'
-      ? pascalCase(name)
-      : style === 'camelCase'
-        ? camelCase(name)
-        : name;
 }
 
 export function callWorker<

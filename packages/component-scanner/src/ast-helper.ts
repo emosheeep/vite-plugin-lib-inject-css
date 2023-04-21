@@ -6,6 +6,8 @@ import pugParser from 'pug-parser';
 import pugWalk from 'pug-walk';
 import ts from 'typescript';
 
+export const WrapperContainer = '__wrapper_container__' as const;
+
 export type NamedImports = Array<{ id: string; as?: string; }>;
 
 interface ImportParam {
@@ -37,7 +39,7 @@ export function walkVueFile(filename: string, visitor: Visitor) {
   if (template) {
     if (template.lang === 'pug') {
       pugWalk(
-        pugParser(pugLexer(`__wrapper_container__\n${template.content}`)),
+        pugParser(pugLexer(`${WrapperContainer}\n${template.content}`)),
         node => {
           if (node.type === 'Tag') {
             visitor.onTag?.(node.name);

@@ -50,12 +50,12 @@ pnpm add component-scanner # or npm/yarn
 
 
 ```js
-import { scan } from 'component-scanner';
+import { scanComponents } from 'component-scanner';
 
-const result = await scan(); // use default options, glob and handle files under current working directory.
+const result = await scanComponents(); // use default options, glob and handle files under current working directory.
 
-const result = await scan({
-  namingStyle: 'kebab-case', // this decide
+const result = await scanComponents({
+  namingStyle: 'kebab-case',
   verbose: true, // whether to print log.
   cwd: process.cwd(), // default is current working directory.
   files: [], // specify files to handle.
@@ -63,7 +63,7 @@ const result = await scan({
     '**/node_modules/**', // node_modules is always ignored.
     '**/dist/**',
     '**/output/**',
-  ]
+  ],
   // will count named imports from these lib.
   libraryNames: [
     'antd',
@@ -75,7 +75,44 @@ const result = await scan({
     onTag: tagName => {}, // html,pug,JSXElement,h,this.$createElement
     onImport: importInfo => {}, // fires when libraryNames are provided.
   },
+  alias: {
+    'my-button': 'a-button', // my-button is a wrapped component of a-button, setting alias configs helps count a-button's usage.
+  }
 })
+```
+
+And then, you'll get `Result[]`:
+
+```ts
+interface Result {
+  filename: string;
+  component: string[];
+  usage: Record<string, number>;
+}
+
+const result: Result = {
+  filename: 'src/modules/list/pages/tag/TagGroup.vue',
+  components: [
+    'byted-link',
+    'template',
+    'icon',
+    'byted-button',
+    'oplog-drawer',
+    'page-layout',
+    'audit-form',
+    'add-form'
+  ],
+  usage: {
+    'byted-link': 1,
+    template: 2,
+    icon: 1,
+    'byted-button': 1,
+    'oplog-drawer': 1,
+    'page-layout': 1,
+    'audit-form': 1,
+    'add-form': 1
+  }
+}
 ```
 
 ## Some Utilities
@@ -155,9 +192,6 @@ export interface ScanOptions {
   /**
    * Library names to filter components.
    * Sometimes we import a component directly from a lib like:
-   * ```js
-   * import { a as b, c } from 'my-component-lib';
-   * ```
    * If you provide library names, it will **extract the named imports from the lib as a component**.
    * For example, in the case above, `a` and `c` will be accepted, `b` is only an alias of `a`, which will be abandoned.
    */
@@ -171,13 +205,18 @@ export interface ScanOptions {
    * Whether to print log.
    * @default true
    */
-  verbose?: boolean
+  verbose?: boolean;
+  /**
+   * Sometimes you probably wrap a component from the library and use it in many places.
+   * You can set alias for these component so that their usage can be counted more exact.
+   */
+  alias?: Record<string, string>
 }
 ```
 
 # Issue
 
-We made some compatibility about vue, the detailed reasons is above. **Sometimes it impacts accuracy, probably appears some unexpected components**. 
+We made some compatibility about vue, the detailed reasons is above. **Sometimes it impacts accuracy, probably appears some unexpected components**.
 
 But we consider that **it should extract component names as much as possible**. Redundant component names can be ignored by some ways, but it probably cause some exceptions if we missed some component name in regression tests.
 
