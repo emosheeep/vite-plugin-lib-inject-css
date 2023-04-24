@@ -1,3 +1,7 @@
+# 1.2.0
+
+refactor: invert key-value of alias to support multiple mappings.
+
 # 1.1.0
 
 feat: add `alias` option to make analysis more exact.

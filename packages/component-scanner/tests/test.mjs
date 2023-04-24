@@ -1,11 +1,14 @@
 import { createRequire } from 'module';
-import { scan } from '../dist/index.js';
+import { scanComponents } from '../dist/index.js';
 
 const vueFile = createRequire(import.meta.url).resolve('./test.vue');
 
 console.log(
-  await scan({
+  await scanComponents({
     namingStyle: 'kebab-case',
+    ignore: [
+      '**/dist/**',
+    ],
     libraryNames: [
       'ant-design-vue',
       'my-component-lib',

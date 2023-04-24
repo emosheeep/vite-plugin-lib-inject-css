@@ -1,11 +1,11 @@
 {
   "name": "component-scanner",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Cross-framework and simple web system component scanner, support vue(html, pug template), react, jsx, tsx, help counting component usage.",
   "author": "秦旭洋 <emosheep@qq.com>",
   "type": "module",
   "main": "dist/index.js",
-  "packageManager": "pnpm@7.25.0",
+  "packageManager": "pnpm@8.3.1",
   "license": "MIT",
   "homepage": "https://github.com/emosheeep/fe-tools/tree/HEAD/packages/component-scanner#readme",
   "repository": {

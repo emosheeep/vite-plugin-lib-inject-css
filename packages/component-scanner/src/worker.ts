@@ -3,6 +3,16 @@ import { path, globby } from 'zx';
 import { fileURLToPath } from 'url';
 import { type NamingStyle, transformNamingStyle } from './utils';
 import { walkFile, type Visitor, NamedImports, WrapperContainer } from './ast-helper';
+import { ScanOptions } from './options';
+
+export interface ComponentDetail {
+  filename: string;
+  components: string[]
+}
+
+export interface Result extends ComponentDetail {
+  usage: Record<string, number>;
+}
 
 interface GlobFiles {
   exec: 'glob-files';
@@ -19,12 +29,14 @@ interface ScanComponent {
   namingStyle?: NamingStyle;
 }
 
-export interface ComponentDetail {
-  filename: string;
-  components: string[]
+interface CountUsage {
+  exec: 'count-usage';
+  alias: ScanOptions['alias'];
+  details: ComponentDetail[];
+  namingStyle?: NamingStyle;
 }
 
-type WorkerData = GlobFiles | ScanComponent;
+type WorkerData = GlobFiles | ScanComponent | CountUsage;
 
 type ExecType = WorkerData['exec'];
 
@@ -38,6 +50,9 @@ interface WorkerOptionsMap {
   'scan-component': Partial<Visitor> & {
     onProgress?: ProgressCallback;
   }
+  'count-usage': {
+    onProgress?: ProgressCallback;
+  };
 }
 
 type WorkerOptions<T extends ExecType> =
@@ -48,6 +63,7 @@ type WorkerOptions<T extends ExecType> =
 interface WorkerOutput {
   'glob-files': string[];
   'scan-component': ComponentDetail[];
+  'count-usage': Result[];
 }
 
 if (!isMainThread) {
@@ -120,6 +136,58 @@ if (!isMainThread) {
     postMessage<EventParams>({
       type: 'finish',
       value: details,
+    });
+  } else if (data.exec === 'count-usage') {
+    const { namingStyle, details, alias = {} } = data;
+    const transformedAlias = new Map(
+      Object.entries(alias).map(([to, from]) => [
+        transformNamingStyle(to, namingStyle),
+        new Set(
+          [from].flat()
+            .filter(Boolean)
+            .map(v => transformNamingStyle(v, namingStyle)),
+        ),
+      ]),
+    );
+
+    type EventParams = WorkerEvent<{
+      finish: WorkerOutput['count-usage'];
+      onProgress: Parameters<ProgressCallback>;
+    }>;
+
+    const { length } = details;
+    const results: Result[] = [];
+    for (let i = 0; i < length; i++) {
+      const detail = details[i];
+
+      postMessage<EventParams>({
+        type: 'onProgress',
+        value: [detail.filename, i, length],
+      });
+
+      const usage: Result['usage'] = {};
+      const increase = name => (usage[name] = (usage[name] ?? 0) + 1);
+      // iterate components of each file
+      for (let j = detail.components.length - 1; j >= 0; j--) {
+        const originalName = detail.components[j];
+        increase(originalName);
+        for (const [realName, aliasNames] of transformedAlias) {
+          aliasNames.has(originalName) && increase(realName); // find possible alias name and use it instead
+        }
+      }
+      // filter empty results
+      const names = Object.keys(usage);
+      if (names.length) {
+        results.push({
+          ...detail,
+          usage,
+          components: names,
+        });
+      }
+    }
+    postMessage<EventParams>({
+      type: 'finish',
+      value: results,
     });
   } else {
     throw new Error('Type error with `exec`');

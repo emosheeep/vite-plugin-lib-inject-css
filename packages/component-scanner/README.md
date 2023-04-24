@@ -75,8 +75,14 @@ const result = await scanComponents({
     onTag: tagName => {}, // html,pug,JSXElement,h,this.$createElement
     onImport: importInfo => {}, // fires when libraryNames are provided.
   },
+  // setting alias configs helps statistics more exact.
   alias: {
-    'my-button': 'a-button', // my-button is a wrapped component of a-button, setting alias configs helps count a-button's usage.
+    'a-button': 'custom-button', // The custom-button will be treated as a-button
+    // These two buttons will be treated as a-button
+    'a-button': [
+      'custom-button',
+      'wrapped-button'
+    ],
   }
 })
 ```
