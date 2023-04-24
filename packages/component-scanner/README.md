@@ -4,7 +4,9 @@
   <a href="https://npmjs.com/package/component-scanner">
     <img src="https://img.shields.io/npm/v/component-scanner" alt="npm package">
   </a>
-  <img src="https://img.shields.io/npm/l/component-scanner" alt="npm license">
+  <img alt="npm downloads" src="https://img.shields.io/npm/dt/component-scanner">
+  <img alt="license" src="https://img.shields.io/npm/l/component-scanner">
+  <img alt="stars" src="https://img.shields.io/github/stars/emosheeep/fe-tools">
 </div>
 
 Cross-framework and simple web system component scanner, support `vue`(`html`, `pug` template), `react`, `jsx`, `tsx`, help counting component usage.

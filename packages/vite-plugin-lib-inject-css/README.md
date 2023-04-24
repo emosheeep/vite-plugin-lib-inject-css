@@ -4,7 +4,9 @@
   <a href="https://npmjs.com/package/vite-plugin-lib-inject-css">
     <img src="https://img.shields.io/npm/v/vite-plugin-lib-inject-css" alt="npm package">
   </a>
-  <img src="https://img.shields.io/npm/l/vite-plugin-lib-inject-css" alt="npm license">
+  <img alt="npm downloads" src="https://img.shields.io/npm/dt/vite-plugin-lib-inject-css">
+  <img alt="license" src="https://img.shields.io/npm/l/vite-plugin-lib-inject-css">
+  <img alt="stars" src="https://img.shields.io/github/stars/emosheeep/fe-tools">
 </div>
 
 English | [简体中文](https://juejin.cn/post/7214374960192782373)
