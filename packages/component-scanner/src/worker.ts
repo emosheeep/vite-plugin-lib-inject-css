@@ -139,16 +139,18 @@ if (!isMainThread) {
     });
   } else if (data.exec === 'count-usage') {
     const { namingStyle, details, alias = {} } = data;
-    const transformedAlias = new Map(
-      Object.entries(alias).map(([to, from]) => [
-        transformNamingStyle(to, namingStyle),
-        new Set(
-          [from].flat()
-            .filter(Boolean)
-            .map(v => transformNamingStyle(v, namingStyle)),
-        ),
-      ]),
-    );
+
+    const transformedAlias = Object.entries(alias)
+      .reduce((result, [realName, aliasNames]) => {
+        realName = transformNamingStyle(realName, namingStyle);
+        for (const name of [aliasNames].flat()) {
+          const aliasName = transformNamingStyle(name, namingStyle);
+          const set = result.get(aliasName) ?? new Set<string>();
+          set.add(realName);
+          result.set(aliasName, set);
+        }
+        return result;
+      }, new Map<string, Set<string>>());
 
     type EventParams = WorkerEvent<{
       finish: WorkerOutput['count-usage'];
@@ -167,13 +169,12 @@ if (!isMainThread) {
 
       const usage: Result['usage'] = {};
       const increase = name => (usage[name] = (usage[name] ?? 0) + 1);
-      // iterate components of each file
+      // Iterate components of each file
       for (let j = detail.components.length - 1; j >= 0; j--) {
         const originalName = detail.components[j];
-        increase(originalName);
-        for (const [realName, aliasNames] of transformedAlias) {
-          aliasNames.has(originalName) && increase(realName); // find possible alias name and use it instead
-        }
+        increase(originalName); // count origin name
+        // If current name is an alias of another components, count them meanwhile.
+        transformedAlias.get(originalName)?.forEach(name => increase(name));
       }
       // filter empty results
       const names = Object.keys(usage);
