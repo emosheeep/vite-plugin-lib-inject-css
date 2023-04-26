@@ -69,13 +69,22 @@ export function libInjectCss(libOptions?: LibOptions): Plugin {
         );
       }
 
+      const createPreserveModulesWarning = (optionPath: string) => {
+        messages.push(
+          'When `' + optionPath + '` is `true`, ' +
+          'the association between chunk file and its css references will lose, ' +
+          'so the style code injection will be skipped.',
+        );
+      };
+
       if (outputOptions.some(v => v?.preserveModules === true)) {
         skipInject = true;
-        messages.push(
-          'When `rollupOptions.preserveModules` is `true`, ' +
-            'the association between chunk file and its css references will lose, ' +
-              'so the style code injection will be skipped.',
-        );
+        createPreserveModulesWarning('rollupOptions.output.preserveModules');
+      }
+
+      if (build.rollupOptions.preserveModules === true) {
+        skipInject = true;
+        createPreserveModulesWarning('rollupOptions.preserveModules');
       }
 
       messages.forEach(msg => console.log(`\n${color.cyan('[vite:lib-inject-css]:')} ${color.yellow(msg)}\n`));
