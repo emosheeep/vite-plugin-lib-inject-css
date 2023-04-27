@@ -34,8 +34,7 @@ export function libInjectCss(libOptions?: LibOptions): Plugin {
         ...options,
       }));
 
-      // preserve vite's default behavior
-      rollupOptions.output = Array.isArray(outputOptions)
+      rollupOptions.output = outputOptions.length === 1
         ? outputOptions[0]
         : outputOptions;
 

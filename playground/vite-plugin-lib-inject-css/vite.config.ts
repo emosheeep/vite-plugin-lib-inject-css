@@ -10,6 +10,13 @@ export default defineConfig({
       entry: scanEntries('src'),
       rollupOptions: {
         external: ['vue'],
+        output: {
+          // Put chunk files at <output>/chunks
+          chunkFileNames: 'chunks/[name].[hash].js',
+          // Put chunk styles at <output>/assets
+          assetFileNames: 'assets/[name][extname]',
+          entryFileNames: '[name].js',
+        },
       },
     }),
   ],
