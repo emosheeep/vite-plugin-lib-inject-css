@@ -1,3 +1,7 @@
+# 1.2.0
+
+- chore: show warnings for `preserveModules` also for deprecated `rollupOptions.preserveModules`. closed [#5](https://github.com/emosheeep/fe-tools/issues/5)
+
 # 1.1.0
 
 - fix: set `hoistTransitiveImports` internally by default to prevent tree-shaking from failure.

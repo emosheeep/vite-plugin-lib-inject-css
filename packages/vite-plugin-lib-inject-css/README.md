@@ -65,10 +65,9 @@ But most of the Vite plugins on the market that claim to automatically inject CS
 
 So the main problem becomes to **how do we know which style files are involved in one chunk file?**.
 
-In fact, vite adds a property named [`viteMetadata`](https://github.com/vitejs/vite/blob/main/packages/vite/src/node/plugins/css.ts#L578-L579) on each chunk file in plugin lifecycle, 
-we can get which resource files(include CSS files) are associated with current chunk file by using this property.
+In fact, vite adds a property named `viteMetadata` on each chunk file in plugin lifecycle, you can check [css.ts](https://github.com/vitejs/vite/blob/main/packages/vite/src/node/plugins/css.ts) for further information.
 
-Based on these, we can inject styles by using plugin hook [renderChunk](https://rollupjs.org/plugin-development/#renderchunk), which is the simplest and most effective way.
+We can get which resources(include CSS files) are associated with current chunk file by using this property. Based on this, the plugin injects styles by using [renderChunk](https://rollupjs.org/plugin-development/#renderchunk) hook, which is the simplest and most effective way.
 
 Prefer to check source code to get more information.
 
@@ -108,8 +107,9 @@ export default defineConfig({
         output: {
           // Put chunk files at <output>/chunks
           chunkFileNames: 'chunks/[name].[hash].js',
-          // Put chunk styles at <output>/styles
+          // Put chunk styles at <output>/assets
           assetFileNames: 'assets/[name][extname]',
+          entryFileNames: '[name].js',
         },
       },
       build: {
@@ -121,7 +121,55 @@ export default defineConfig({
 })
 ```
 
-# Attentions
+# Recipes of creating component library
+
+How do we create a component library with vite, which can auto import styles and has out-of-box tree-shaking functionality?
+
+## Current Status
+
+Most of component libraries provide two ways. One is totally import:
+
+```js
+import Vue from 'vue';
+import XxxUI from 'component-lib';
+Vue.use(XxxUI);
+```
+
+The other is import on demand, in common uses with a third-part plugin like `babel-plugin-import`:
+
+```js
+import { Button } from 'component-lib';
+// ↓ ↓ ↓ transformed ↓ ↓ ↓
+import Button from 'component-lib/dist/button/index.js'
+import 'component-lib/dist/button/style.css'
+```
+
+**But the best way is that when we use named imports, the style imports and tree-shaking can be applied automatically**.
+
+## How should we do
+
+Fortunately, ES Module naturally has static analysis capabilities, and mainstream tools basically implement ESM-based Tree-shaking functions, such as `webpack/rollup/vite`.
+
+Then we only need the following two steps:
+- Adjust the output format to ES Module → Out-of-the-box Tree-shaking functionality.
+- Use this plugin for style injection → auto import styles
+
+It should be noted that the import of CSS files has side effects, and we also need to **declare the [sideEffects](https://webpack.js.org/guides/tree-shaking) field in the library's package.json file** to prevent the CSS file from being accidentally removed by the user side builds.
+
+Here's an example:
+
+```json
+{
+  "name": "component-lib",
+  "version": "1.0.0",
+  "main": "dist/index.mjs",
+  "sideEffects": [
+    "**/*.css"
+  ]
+}
+```
+
+# Questions
 
 ## Why does style code injection fail?
 
@@ -167,53 +215,42 @@ Further, see [why-do-additional-imports-turn-up-in-my-entry-chunks-when-code-spl
 
 As a third-part library, this behavior may cause sideEffects and make tree-shaking fail, so we set `hoistTransitiveImports: false` internally by default, you can still manually overwrite it.
 
+## Output directory structure is ugly when building with multi-entries.
 
-# Recipes
+When we build our library with multi-entries, the output looks as follows in common:
 
-How do we create a component library with vite, which can auto import styles and has out-of-box tree-shaking functionality?
-
-## Current Status
-
-Most of component libraries provide two ways. One is totally import:
-
-```js
-import Vue from 'vue';
-import XxxUI from 'component-lib';
-Vue.use(XxxUI);
+```
+dist/demo.css            0.05 kB │ gzip: 0.07 kB
+dist/demo-451ab1e5.mjs   0.36 kB │ gzip: 0.26 kB
+dist/demo-component.mjs  0.09 kB │ gzip: 0.10 kB
+dist/index.mjs           0.16 kB │ gzip: 0.14 kB
 ```
 
-The other is import on demand, in common uses with a third-part plugin like `babel-plugin-import`:
+Generally speaking, **the users who use your library usually don't care about how does your dist directory structure looks like**. Just don’t tangle this, we just need to ensure that the unused files will get tree-shaken when we use named imports from the library.
+
+Indeed, you can customize filenames by using `output.xxxFileNames` options:
 
 ```js
-import { Button } from 'component-lib';
-// ↓ ↓ ↓ transformed ↓ ↓ ↓
-import Button from 'component-lib/dist/button/index.js'
-import 'component-lib/dist/button/style.css'
-```
-
-**But the best way is that when we use named imports, the style imports and tree-shaking can be completed automatically**.
-
-## How should we do
-
-Fortunately, ES Module naturally has static analysis capabilities, and mainstream tools basically implement ESM-based Tree-shaking functions, such as `webpack/rollup/vite`.
-
-Then we only need the following two steps:
-- Adjust the output format to ES Module → Out-of-the-box Tree-shaking functionality.
-- Use this plugin for style injection → auto import styles
-
-It should be noted that the import of CSS files has side effects, and we also need to **declare the [sideEffects](https://webpack.js.org/guides/tree-shaking) field in the library's package.json file** to prevent the CSS file from being accidentally removed by the user side builds.
-
-Here's an example:
-
-```json
 {
-  "name": "component-lib",
-  "version": "1.0.0",
-  "main": "dist/index.mjs",
-  "sideEffects": [
-    "**/*.css"
-  ]
+  rollupOptions: {
+    output: {
+      // Put chunk files at <output>/chunks
+      chunkFileNames: 'chunks/[name].[hash].js',
+      // Put chunk styles at <output>/assets
+      assetFileNames: 'assets/[name][extname]',
+      entryFileNames: '[name].js',
+    },
+  },
 }
+```
+
+And then you'll get:
+
+```
+dist/assets/demo.css          0.05 kB │ gzip: 0.07 kB
+dist/chunks/demo.a6107609.js  0.37 kB │ gzip: 0.26 kB
+dist/demo-component.js        0.09 kB │ gzip: 0.10 kB
+dist/index.js                 0.15 kB │ gzip: 0.14 kB
 ```
 
 # License
