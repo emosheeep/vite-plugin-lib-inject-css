@@ -1,13 +1,9 @@
 # vite-plugin-lib-inject-css
 
-<div style="display: flex;">
-  <a href="https://npmjs.com/package/vite-plugin-lib-inject-css">
-    <img src="https://img.shields.io/npm/v/vite-plugin-lib-inject-css" alt="npm package">
-  </a>
-  <img alt="npm downloads" src="https://img.shields.io/npm/dt/vite-plugin-lib-inject-css">
-  <img alt="license" src="https://img.shields.io/npm/l/vite-plugin-lib-inject-css">
-  <img alt="stars" src="https://img.shields.io/github/stars/emosheeep/fe-tools">
-</div>
+[![npm version](https://img.shields.io/npm/v/vite-plugin-lib-inject-css)](https://npmjs.com/package/vite-plugin-lib-inject-css)
+![weekly downloads](https://img.shields.io/npm/dw/vite-plugin-lib-inject-css)
+![license](https://img.shields.io/npm/l/vite-plugin-lib-inject-css)
+![stars](https://img.shields.io/github/stars/emosheeep/fe-tools)
 
 English | [简体中文](https://juejin.cn/post/7214374960192782373)
 

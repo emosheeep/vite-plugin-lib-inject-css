@@ -1,14 +1,9 @@
 # circular dependencies scanner ⚡
 
-<div style="display: flex;">
-  <a href="https://npmjs.com/package/circular-dependency-scanner">
-    <img alt="npm version" src="https://img.shields.io/npm/v/circular-dependency-scanner">
-  </a>
-  <img alt="Publish Package" src="https://github.com/emosheeep/circular-dependency-scanner/actions/workflows/npm-publish.yml/badge.svg">
-  <img alt="npm downloads" src="https://img.shields.io/npm/dt/circular-dependency-scanner">
-  <img alt="license" src="https://img.shields.io/npm/l/circular-dependency-scanner">
-  <img alt="stars" src="https://img.shields.io/github/stars/emosheeep/circular-dependency-scanner">
-</div>
+[![npm version](https://img.shields.io/npm/v/circular-dependency-scanner)](https://npmjs.com/package/circular-dependency-scanner)
+![weekly downloads](https://img.shields.io/npm/dw/circular-dependency-scanner)
+![license](https://img.shields.io/npm/l/circular-dependency-scanner)
+![stars](https://img.shields.io/github/stars/emosheeep/fe-tools)
 
 开箱即用循环依赖检测器，内置了 JavaScript API 和命令行工具两种使用方式，支持我们常用的所有文件类型，如 `.js，.jsx，.ts，.tsx，.mjs，.cjs，.vue`。 
  
@@ -27,11 +22,11 @@
 
 下图为运行 `ds -o circles.json` 的示例：
 
-<img alt="运行示例" src="https://raw.githubusercontent.com/emosheeep/circular-dependency-scanner/HEAD/snapshots/cli.gif" width="600" />
+![cli.gif](https://raw.githubusercontent.com/emosheeep/fe-tools/HEAD/packages/circular-dependency-scanner/snapshots/cli.gif)
 
 如果你没有传递 `output` 选项，那么输出内容会直接打印到控制台，其中`ts,js,vue` 文件输出时对应 `蓝色,黄色,绿色`，如下所示：
 
-<img alt="output-snapshot" src="https://raw.githubusercontent.com/emosheeep/circular-dependency-scanner/HEAD/snapshots/output.png" width="600" />
+![output-snapshot](https://raw.githubusercontent.com/emosheeep/fe-tools/HEAD/packages/circular-dependency-scanner/snapshots/output.png)
 
 # 动机
 

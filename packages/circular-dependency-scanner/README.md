@@ -1,13 +1,9 @@
 # circular dependencies scanner ⚡
 
-<div style="display: flex;">
-  <a href="https://npmjs.com/package/circular-dependency-scanner">
-    <img alt="npm version" src="https://img.shields.io/npm/v/circular-dependency-scanner">
-  </a>
-  <img alt="npm downloads" src="https://img.shields.io/npm/dt/circular-dependency-scanner">
-  <img alt="license" src="https://img.shields.io/npm/l/circular-dependency-scanner">
-  <img alt="stars" src="https://img.shields.io/github/stars/emosheeep/fe-tools">
-</div>
+[![npm version](https://img.shields.io/npm/v/circular-dependency-scanner)](https://npmjs.com/package/circular-dependency-scanner)
+![weekly downloads](https://img.shields.io/npm/dw/circular-dependency-scanner)
+![license](https://img.shields.io/npm/l/circular-dependency-scanner)
+![stars](https://img.shields.io/github/stars/emosheeep/fe-tools)
 
 Out-of-box circular dependencies detector, with both JavaScript API and Command Line Tool built in, support all file types we used in common like `.js,.jsx,.ts,.tsx,.mjs,.cjs,.vue`.
 
@@ -26,11 +22,11 @@ English | [中文](./README.zh_CN.md)
 
 Here the running example for the `ds -o circles.json` execution:
 
-<img alt="cli.gif" src="https://raw.githubusercontent.com/emosheeep/fe-tools/HEAD/packages/circular-dependency-scanner/snapshots/cli.gif" width="600" />
+![cli.gif](https://raw.githubusercontent.com/emosheeep/fe-tools/HEAD/packages/circular-dependency-scanner/snapshots/cli.gif)
 
 The `ts,js,vue` files will be printed directly into console as `blue,yellow,green` as follows if you didn't pass an output filename param:
 
-<img alt="output-snapshot" src="https://raw.githubusercontent.com/emosheeep/fe-tools/HEAD/packages/circular-dependency-scanner/snapshots/output.png" width="600" />
+![output-snapshot](https://raw.githubusercontent.com/emosheeep/fe-tools/HEAD/packages/circular-dependency-scanner/snapshots/output.png)
 
 # Motivation
 
