@@ -1,3 +1,12 @@
+# 2.0.0
+
+- feat(cli): add `--throw` option, to make command exit with code 1 when cycles're found, closed [#7](https://github.com/emosheeep/fe-tools/issues/7)
+- chore(deps): update big version of major dependencies
+
+## Breaking Change
+
+- refactor(export): adjust exported fields
+
 # 1.1.3
 
 - fix(circular): trailing slash removing error

@@ -1,4 +1,5 @@
-import { Listr } from 'listr2';
+import { Listr, PRESET_TIMER } from 'listr2';
+import { minimatch } from 'minimatch';
 import { chalk, path } from 'zx';
 import { type Edge, type FullAnalysisResult } from 'graph-cycles';
 import { logger } from './logger';
@@ -10,22 +11,27 @@ export interface DetectOptions {
    * Base path to execute command.
    * @default process.cwd()
    */
-  cwd: string;
+  cwd?: string;
   /**
    * Whether to use absolute path.
    * @default false
    */
-  absolute: boolean;
+  absolute?: boolean;
   /**
    * Glob patterns to exclude from matches.
    * @default ['node_modules']
    */
-  ignore: string[];
+  ignore?: string[];
+  /**
+   * Glob pattern to filter output circles.
+   * @default ['node_modules']
+   */
+  filter?: string;
   /**
    * Path alias to resolve.
    * @default { '@': 'src' }
    */
-  alias: Record<string, string>;
+  alias?: Record<string, string>;
 }
 
 interface TaskCtx {
@@ -37,8 +43,8 @@ interface TaskCtx {
 /**
  * Detect circles among dependencies.
  */
-export async function circularDepsDetect(options: DetectOptions): Promise<string[][]> {
-  let { cwd = process.cwd(), ignore = [], absolute = false, alias } = options;
+export async function circularDepsDetect(options?: DetectOptions): Promise<string[][]> {
+  let { cwd = process.cwd(), ignore = [], absolute = false, alias = {}, filter } = options || {} as DetectOptions;
 
   /* ----------- Parameters pre-handle start ----------- */
 
@@ -98,18 +104,26 @@ export async function circularDepsDetect(options: DetectOptions): Promise<string
       task: async (_, task) => task.newListr([{
         title: 'Wait a moment...',
         task: async (ctx, task) => {
-          ctx.result = await callWorker({
+          let result = await callWorker({
             exec: 'analyze',
             entries: ctx.entries,
           });
-          task.title = `${chalk.cyan(ctx.result.length)} circles were found.`;
+
+          if (filter) {
+            const matcher = minimatch.filter(filter);
+            result = result.filter(v => v.some(matcher));
+          }
+
+          task.title = `${chalk.cyan(result.length)} circles were found${filter ? `, filtered with ${chalk.yellow(filter)}` : ''}.`;
+
+          ctx.result = result;
         },
       }]),
     },
   ], {
     rendererOptions: {
-      showTimer: true,
-      collapse: false,
+      collapseSubtasks: false,
+      timer: PRESET_TIMER,
     },
   });
 
