@@ -81,22 +81,27 @@ const results = circularDepsDetect({
    * Base path to execute command.
    * @default process.cwd()
    */
-  cwd: string;
+  cwd?: string;
   /**
    * Whether to use absolute path.
    * @default false
    */
-  absolute: boolean;
+  absolute?: boolean;
   /**
    * Glob patterns to exclude from matches.
    * @default ['node_modules']
    */
-  ignore: string[];
+  ignore?: string[];
+  /**
+   * Glob pattern to filter output circles.
+   * @default ['node_modules']
+   */
+  filter?: string;
   /**
    * Path alias to resolve.
    * @default { '@': 'src' }
    */
-  alias: Record<string, string>;
+  alias?: Record<string, string>;
 });
 
 ```
