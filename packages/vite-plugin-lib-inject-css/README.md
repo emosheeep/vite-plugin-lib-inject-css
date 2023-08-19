@@ -146,9 +146,10 @@ import 'component-lib/dist/button/style.css'
 
 Fortunately, ES Module naturally has static analysis capabilities, and mainstream tools basically implement ESM-based Tree-shaking functions, such as `webpack/rollup/vite`.
 
-Then we only need the following two steps:
-- Adjust the output format to ES Module → Out-of-the-box Tree-shaking functionality.
-- Use this plugin for style injection → auto import styles
+Then we only need the following three steps:
+1. Adjust the output format to ES Module → Out-of-the-box Tree-shaking functionality.
+2. Use this plugin for style injection → auto import styles
+3. The last and most important, **add all of the entry files you’ve exported in main.js to your `rollup.input` configurations**.
 
 It should be noted that the import of CSS files has side effects, and we also need to **declare the [sideEffects](https://webpack.js.org/guides/tree-shaking) field in the library's package.json file** to prevent the CSS file from being accidentally removed by the user side builds.
 
@@ -189,6 +190,13 @@ Due to the **internal implementation**, we have to make some trade-offs:
   }
 }
 ```
+
+## About `preserveModules`
+
+Anytime when you attempt using this option, there in common may  has more efficient ways to meet you. For example, **you can turn every file into an entry point, like suggested in the Rollup [docs](https://rollupjs.org/configuration-options/#input)**:
+
+> If you want to convert a set of files to another format while maintaining the file structure and export signatures, the recommended way—instead of using `output.preserveModules` that may tree-shake exports as well as emit virtual files created by plugins—is to turn every file into an entry point. You can do so dynamically e.g. via the `glob` package:
+
 ## Why do additional empty imports turn up in entry chunks?
 
 When using **multiple** chunks, imports of dependencies of entry chunks will be added as empty imports to the entry chunks themselves. This is rollup's default behavior **in order for javascript engine performance optimizations**, you can turn it off via `output.hoistTransitiveImports: false`.
