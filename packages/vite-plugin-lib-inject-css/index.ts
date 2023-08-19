@@ -63,8 +63,8 @@ export function libInjectCss(libOptions?: LibOptions): Plugin {
       if (build.lib && build.cssCodeSplit === false) {
         messages.push(
           '`config.build.cssCodeSplit` is set `true` by the plugin internally in library mode, ' +
-              'but it seems to be `false` now. This may cause style code injection fail, ' +
-                'please check the configuration to prevent this option from being modified.',
+          'but it seems to be `false` now. This may cause style code injection fail, ' +
+          'please check the configuration to prevent this option from being modified.',
         );
       }
 
@@ -99,7 +99,7 @@ export function libInjectCss(libOptions?: LibOptions): Plugin {
        */
       const ms = new MagicString(code);
       for (const cssFileName of importedCss) {
-        let cssFilePath = path.relative(path.dirname(chunk.fileName), cssFileName);
+        let cssFilePath = path.relative(path.dirname(chunk.fileName), cssFileName).replaceAll(/[\\/]+/g, '/'); // Replace all backslash or multiple slashes, fixed #9
         cssFilePath = cssFilePath.startsWith('.') ? cssFilePath : `./${cssFilePath}`;
         ms.prepend(`import '${cssFilePath}';\n`);
       }

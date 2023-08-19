@@ -1,6 +1,12 @@
+# 1.2.1
+
+- fix: cross-platform path handling. Closes [#9](https://github.com/emosheeep/fe-tools/issues/9).
+- docs: add more details about `preserveModules` option in README.
+- chore: upgrade dependencies.
+
 # 1.2.0
 
-- chore: show warnings for `preserveModules` also for deprecated `rollupOptions.preserveModules`. closed [#5](https://github.com/emosheeep/fe-tools/issues/5)
+- chore: show warnings for `preserveModules` also for deprecated `rollupOptions.preserveModules`. closed [#5](https://github.com/emosheeep/fe-tools/issues/5).
 
 # 1.1.0
 

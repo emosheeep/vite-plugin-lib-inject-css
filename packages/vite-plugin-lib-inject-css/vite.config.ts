@@ -6,7 +6,7 @@ import { externalizeDeps } from 'vite-plugin-externalize-deps';
 export default defineConfig({
   plugins: [
     dtsPlugin({
-      skipDiagnostics: true,
+      rollupTypes: true,
     }),
     externalizeDeps({
       nodeBuiltins: true,
