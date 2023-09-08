@@ -48,6 +48,12 @@ export function libInjectCss(libOptions?: LibOptions): Plugin {
            * @see https://github.com/vitejs/vite/blob/HEAD/packages/vite/src/node/plugins/css.ts#L578-L579
            */
           cssCodeSplit: true,
+          /**
+           * Must emit assets on SSR, otherwise there won't be any CSS files generated and the import statements
+           * injected by this plugin will refer to an undefined module.
+           * @see https://github.com/vitejs/vite/blob/HEAD/packages/vite/src/node/plugins/asset.ts#L213-L218
+           */
+          ssrEmitAssets: true,
         },
       };
     },
@@ -62,8 +68,16 @@ export function libInjectCss(libOptions?: LibOptions): Plugin {
 
       if (build.lib && build.cssCodeSplit === false) {
         messages.push(
-          '`config.build.cssCodeSplit` is set `true` by the plugin internally in library mode, ' +
-          'but it seems to be `false` now. This may cause style code injection fail, ' +
+          '`config.build.cssCodeSplit` is set to `true` by the plugin internally in library mode, ' +
+          'but it seems to be `false` now. This may cause style code injection to fail, ' +
+          'please check the configuration to prevent this option from being modified.',
+        );
+      }
+
+      if (build.ssr && build.ssrEmitAssets === false) {
+        messages.push(
+          '`config.build.ssrEmitAssets` is set to `true` by the plugin internally in library mode, ' +
+          'but it seems to be `false` now. This may cause style code injection to fail on SSR, ' +
           'please check the configuration to prevent this option from being modified.',
         );
       }
