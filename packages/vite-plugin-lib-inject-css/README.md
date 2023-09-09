@@ -24,6 +24,7 @@ Note that this plugin only works with [library-mode](https://vitejs.dev/guide/bu
 
 - 💡 Multiple entires support.
 - ⚡️ Sourcemap support.
+- 💻 SSR building support.
 - 🛠 Out-of-box, tiny and pretty.
 
 # Motivation
@@ -55,17 +56,19 @@ export { Button, xxx };
 import { Button } from 'component-lib';
 ```
 
-The simplest way is to add a line `import './style.css';`; to the top of the generated file, multiple lines are multiple lines. As a library provider, we should **provide flexibility as much as possible**, and **delegate the task of how to handle these css files to the user's build tool**.
+The simplest way is to add a line `import './style.css';` to the top of the generated file, multiple lines are multiple lines. As a library provider, we should **provide flexibility as much as possible**, and **delegate the task of how to handle these css files to the user's build tool**.
 
-But most of the Vite plugins on the market that claim to automatically inject CSS are designed in a way use `document.createElement ('style')`, which is not graceful, and it assumes that the current is in the Browser's DOM environment.
+But most of the Vite plugins on the market that claim to automatically inject CSS are designed in a way use `document.createElement ('style')`, which is not graceful, and **it assumes that the current is in the Browser's DOM environment, which makes the library SSR-incompatible**.
 
-So the main problem becomes to **how do we know which style files are involved in one chunk file?**.
+Here's the reply([vite#issuecomment](https://github.com/vitejs/vite/issues/1579#issuecomment-763295757)) of the author of Vite, Evan You.
+
+So the main problem becomes to **how do we know which style files are involved in one chunk file**?
 
 In fact, vite adds a property named `viteMetadata` on each chunk file in plugin lifecycle, you can check [css.ts](https://github.com/vitejs/vite/blob/main/packages/vite/src/node/plugins/css.ts) for further information.
 
 We can get which resources(include CSS files) are associated with current chunk file by using this property. Based on this, the plugin injects styles by using [renderChunk](https://rollupjs.org/plugin-development/#renderchunk) hook, which is the simplest and most effective way.
 
-Prefer to check source code to get more information.
+*Prefer to check plugin source code to get more information and welcome to make contribution*, which is simple enough(100+ lines).
 
 # Usage
 

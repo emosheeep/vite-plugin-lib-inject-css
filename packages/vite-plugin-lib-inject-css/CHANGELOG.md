@@ -1,3 +1,8 @@
+# 1.3.0
+
+- feat: emit css files on SSR build. Closed [#12](https://github.com/emosheeep/fe-tools/issues/12).
+- docs: improve documentation.
+
 # 1.2.1
 
 - fix: cross-platform path handling. Closes [#9](https://github.com/emosheeep/fe-tools/issues/9).

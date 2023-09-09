@@ -45,7 +45,7 @@ export function libInjectCss(libOptions?: LibOptions): Plugin {
           rollupOptions,
           /**
            * Must enable css code split, otherwise there's only one `style.css` and `chunk.viteMetadata.importedCss` will be empty.
-           * @see https://github.com/vitejs/vite/blob/HEAD/packages/vite/src/node/plugins/css.ts#L578-L579
+           * @see https://github.com/vitejs/vite/blob/HEAD/packages/vite/src/node/plugins/css.ts#L613
            */
           cssCodeSplit: true,
           /**
