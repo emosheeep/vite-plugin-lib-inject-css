@@ -9,6 +9,7 @@ export const extensions = [
   'mjs',
   'cjs',
 ] as const;
+
 export type Ext = (typeof extensions)[number];
 
 /**
@@ -20,22 +21,6 @@ export const removeTrailingSlash = (str) =>
   /[/\\]$/.test(str) ? removeTrailingSlash(str.slice(0, -1)) : str;
 
 /**
- * Replace alias with real path.
- * @param source - source path
- * @param alias - alias configurations
- */
-export function replaceAlias(source: string, alias: Record<string, string>) {
-  if (source.startsWith('.') || path.isAbsolute(source)) return source;
-  for (const [from, to] of Object.entries(alias)) {
-    if (source === from) return to;
-    if (source.startsWith(path.join(from, '/'))) {
-      return path.join(to, source.slice(from.length));
-    }
-  }
-  return source;
-}
-
-/**
  * Autocompletion for path suffixes.
  */
 export function revertExtension(origin: string) {
@@ -44,26 +29,11 @@ export function revertExtension(origin: string) {
   for (const ext of extensions) {
     for (const result of [
       `${removeTrailingSlash(origin)}.${ext}`,
-      path.join(origin, `index.${ext}`),
+      path.posix.join(origin, `index.${ext}`),
     ]) {
       if (fs.existsSync(result)) return result;
     }
   }
-}
-
-/**
- * Get import specifiers's real path from file.
- */
-export function getRealPathOfSpecifier(
-  filename: string,
-  specifier: string,
-  alias: Record<string, string>,
-) {
-  return revertExtension(
-    specifier.startsWith('.')
-      ? path.resolve(path.dirname(filename), specifier)
-      : replaceAlias(specifier, alias),
-  );
 }
 
 const colorize = (filename: string) =>

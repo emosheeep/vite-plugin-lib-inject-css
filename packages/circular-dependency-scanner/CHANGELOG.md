@@ -1,3 +1,9 @@
+# 2.1.0
+
+- feat(cli): parse tsconfig/jsconfig to get alias.
+- revert(cli): remove `alias` support, use feature listed above instead.
+- chore(deps): upgrade dependencies.
+
 # 2.0.0
 
 - feat(cli): add `--throw` option, to make command exit with code 1 when cycles're found, closed [#7](https://github.com/emosheeep/fe-tools/issues/7)

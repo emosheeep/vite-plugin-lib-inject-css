@@ -1,6 +1,7 @@
 import { Listr, PRESET_TIMER } from 'listr2';
 import { minimatch } from 'minimatch';
 import { chalk, path } from 'zx';
+import { type TsConfigResult, getTsconfig } from 'get-tsconfig';
 import { type Edge, type FullAnalysisResult } from 'graph-cycles';
 import { logger } from './logger';
 import { extensions } from './utils';
@@ -27,11 +28,6 @@ export interface DetectOptions {
    * @default ['node_modules']
    */
   filter?: string;
-  /**
-   * Path alias to resolve.
-   * @default { '@': 'src' }
-   */
-  alias?: Record<string, string>;
 }
 
 interface TaskCtx {
@@ -50,21 +46,12 @@ export async function circularDepsDetect(
     cwd = process.cwd(),
     ignore = [],
     absolute = false,
-    alias = {},
     filter,
   } = options || ({} as DetectOptions);
 
   /* ----------- Parameters pre-handle start ----------- */
 
   ignore = [...new Set([...ignore, '**/node_modules/**'])];
-
-  // convert alias to absolute path
-  alias = Object.fromEntries(
-    Object.entries(Object.assign({ '@': 'src' }, alias)).map(([from, to]) => [
-      from,
-      path.resolve(cwd, to),
-    ]),
-  );
 
   /* ------------ Parameters pre-handle end ------------ */
 
@@ -74,6 +61,18 @@ export async function circularDepsDetect(
     `Working directory is ${chalk.underline.cyan(path.resolve(cwd))}`,
   );
   logger.info(`Ignored paths: ${ignore.map((v) => chalk.yellow(v)).join(',')}`);
+
+  const tsconfig = [
+    'tsconfig.json',
+    'jsconfig.json',
+  ].reduceRight<TsConfigResult | null>(
+    (config, filename) => config ?? getTsconfig(cwd, filename),
+    null,
+  );
+
+  if (tsconfig?.config.compilerOptions?.paths) {
+    logger.info(`Config file detected: ${chalk.cyan(tsconfig.path)}`);
+  }
 
   const ctx: TaskCtx = { entries: [], result: [], files: [] };
 
@@ -100,14 +99,14 @@ export async function circularDepsDetect(
       },
       {
         title: 'Pulling out import specifiers from files...',
-        options: { bottomBar: 1 },
+        rendererOptions: { bottomBar: 1 },
         task: async (ctx, task) => {
           ctx.entries = await callWorker(
             {
               exec: 'pull-out',
               cwd,
               absolute,
-              alias,
+              tsconfig,
               files: ctx.files,
             },
             {

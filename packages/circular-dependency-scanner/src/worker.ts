@@ -2,8 +2,9 @@ import { workerData, parentPort, Worker, isMainThread } from 'worker_threads';
 import { type Edge, analyzeGraph, FullAnalysisResult } from 'graph-cycles';
 import { path, globby } from 'zx';
 import { fileURLToPath } from 'url';
+import { type TsConfigResult, createPathsMatcher } from 'get-tsconfig';
 import { walkFile } from './ast';
-import { getRealPathOfSpecifier } from './utils';
+import { revertExtension } from './utils';
 
 interface GlobFiles {
   exec: 'glob-files';
@@ -23,7 +24,7 @@ interface PullOut {
   cwd: string;
   absolute: boolean;
   files: string[];
-  alias: Record<string, string>;
+  tsconfig?: TsConfigResult | null;
 }
 
 interface Analyze {
@@ -66,8 +67,17 @@ if (!isMainThread) {
       }),
     });
   } else if (data.exec === 'pull-out') {
-    const { files, cwd, absolute, alias } = data;
+    const { files, cwd, absolute, tsconfig } = data;
     const entries: Edge[] = [];
+    const pathMatcher = tsconfig && createPathsMatcher(tsconfig);
+
+    const getRealPathOfSpecifier = (filename: string, specifier: string) =>
+      revertExtension(
+        specifier.startsWith('.')
+          ? path.resolve(path.posix.dirname(filename), specifier)
+          : pathMatcher?.(specifier)[0] ?? specifier,
+      );
+
     type ParamType = WorkerEvent<{
       finish: Edge[];
       onProgress: Parameters<ProgressCallback>;
@@ -84,8 +94,8 @@ if (!isMainThread) {
 
       const deps: string[] = [];
       const visitor = (value) =>
-        (value = getRealPathOfSpecifier(filename, value, alias)) &&
-        deps.push(value);
+        (value = getRealPathOfSpecifier(filename, value)) && deps.push(value);
+
       walkFile(filename, { onExportFrom: visitor, onImportFrom: visitor });
       entries.push(
         absolute

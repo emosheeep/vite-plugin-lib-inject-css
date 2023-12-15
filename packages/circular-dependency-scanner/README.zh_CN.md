@@ -64,7 +64,6 @@ ds --filter 'src/router/*.ts' # only print the circles matched the pattern.
 ds --absolute # print absolute path.
 ds --ignore output dist node_modules # path to ignore.
 ds --output circles.json # output analysis into specified file.
-ds --alias @:src @components:src/components # path alias, follows `<from>:<to>` convention.
 ds --throw # exit with code 1 when cycles're found.
 ```
 
@@ -96,11 +95,6 @@ const results = circularDepsDetect({
    * @default ['node_modules']
    */
   filter?: string;
-  /**
-   * Path alias to resolve.
-   * @default { '@': 'src' }
-   */
-  alias?: Record<string, string>;
 });
 
 ```

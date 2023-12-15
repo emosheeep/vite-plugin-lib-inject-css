@@ -65,7 +65,6 @@ ds --filter 'src/router/*.ts' # only print the circles matched the pattern.
 ds --absolute # print absolute path.
 ds --ignore output dist node_modules # path to ignore.
 ds --output circles.json # output analysis into specified file.
-ds --alias @:src @components:src/components # path alias, follows `<from>:<to>` convention.
 ds --throw # exit with code 1 when cycles're found.
 ```
 
@@ -97,11 +96,6 @@ const results = circularDepsDetect({
    * @default ['node_modules']
    */
   filter?: string;
-  /**
-   * Path alias to resolve.
-   * @default { '@': 'src' }
-   */
-  alias?: Record<string, string>;
 });
 
 ```
@@ -125,7 +119,7 @@ If some of the circles it found make no sense, you can use `--filter` option to 
 
 ## Running at monorepo
 
-The analysis of file reference depend on the `alias` configurations you have supplied. So if you run this command at your monorepo root directory, you may find that some of the different projects under may include same alias configurations, which cause the results unreliable.
+The analysis of file reference depend on the `alias` configurations you supplied. So if you run this command at your monorepo root directory, you may find that some of the different projects may include same `alias` but redirect to a different path, which cause the results unreliable.
 
 **If you want to analyze multiple projects, please execute one by one**.
 
