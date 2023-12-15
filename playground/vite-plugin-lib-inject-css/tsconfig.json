@@ -12,18 +12,9 @@
     "noImplicitAny": false,
     "outDir": "dist",
     "baseUrl": ".",
-    "types": [
-      "node",
-      "vite/client"
-    ],
-    "lib": [
-      "esnext",
-    ],
+    "types": ["node", "vite/client"],
+    "lib": ["esnext"]
   },
-  "include": [
-    "**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-  ]
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules"]
 }

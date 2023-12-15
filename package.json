@@ -4,21 +4,25 @@
   "description": "This is a monorepo for front end tools.",
   "author": "秦旭洋 <emosheep@qq.com>",
   "license": "MIT",
-  "packageManager": "pnpm@8.3.1",
+  "packageManager": "pnpm@8.12.1",
   "scripts": {
     "prepare": "husky install",
     "lint": "eslint . --fix --ext .js,.ts"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.59.0",
-    "@typescript-eslint/parser": "^5.59.0",
-    "eslint": "^8.38.0",
-    "eslint-config-standard": "^17.0.0",
-    "eslint-define-config": "^1.18.0",
-    "eslint-plugin-import": "^2.27.5",
+    "@typescript-eslint/eslint-plugin": "^6.14.0",
+    "@typescript-eslint/parser": "^6.14.0",
+    "eslint": "^8.55.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-define-config": "^2.0.0",
+    "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-n": "^15.7.0",
+    "eslint-plugin-prettier": "^5.0.1",
     "eslint-plugin-promise": "^6.1.1",
     "husky": "^8.0.3",
-    "typescript": "^4.9.5"
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.1.1",
+    "typescript": "^5.3.3"
   }
 }

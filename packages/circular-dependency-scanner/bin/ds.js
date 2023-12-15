@@ -12,28 +12,46 @@ program
   .description(description)
   .argument('[path]', 'command execute path. (default: process.cwd())')
   .option('--filter <pattern>', 'glob pattern to filter output circles.')
-  .option('--alias <pairs...>', 'path alias, follows `<from>:<to>` convention.', ['@:src'])
-  .option('--absolute', 'print absolute path instead. usually use with editor which can quickly jump to the file.', false)
-  .option('-o, --output <filename>', 'output the analysis into specified json file.')
-  .option('-i, --ignore <patterns...>', 'glob patterns to exclude matches.', ['**/node_modules/**'])
-  .option('-t, --throw', 'exit with code 1 when cycles\'re found.', false)
+  .option(
+    '--alias <pairs...>',
+    'path alias, follows `<from>:<to>` convention.',
+    ['@:src'],
+  )
+  .option(
+    '--absolute',
+    'print absolute path instead. usually use with editor which can quickly jump to the file.',
+    false,
+  )
+  .option(
+    '-o, --output <filename>',
+    'output the analysis into specified json file.',
+  )
+  .option('-i, --ignore <patterns...>', 'glob patterns to exclude matches.', [
+    '**/node_modules/**',
+  ])
+  .option('-t, --throw', "exit with code 1 when cycles're found.", false)
   .action(async (cwd, options) => {
     const { alias, output, throw: isThrow, ...rest } = options;
     const cycles = await circularDepsDetect({
       ...rest,
       cwd,
-      alias: Object.fromEntries(alias.map(v => v.split(':'))),
+      alias: Object.fromEntries(alias.map((v) => v.split(':'))),
     });
 
     if (!cycles.length) return;
 
     if (output) {
-      fs.writeFileSync(output || 'circles.json', JSON.stringify(cycles, null, 2));
-      console.log([
-        chalk.blue('info'),
-        'Output has been redirected to',
-        chalk.cyan.underline(output),
-      ].join(' '));
+      fs.writeFileSync(
+        output || 'circles.json',
+        JSON.stringify(cycles, null, 2),
+      );
+      console.log(
+        [
+          chalk.blue('info'),
+          'Output has been redirected to',
+          chalk.cyan.underline(output),
+        ].join(' '),
+      );
     } else {
       printCircles(cycles);
     }

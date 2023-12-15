@@ -12,7 +12,11 @@ interface GlobFiles {
   cwd: string;
 }
 
-type ProgressCallback = (filename: string, index: number, total: number) => void;
+type ProgressCallback = (
+  filename: string,
+  index: number,
+  total: number,
+) => void;
 
 interface PullOut {
   exec: 'pull-out';
@@ -33,21 +37,22 @@ type ExecType = WorkerData['exec'];
 interface WorkerOptionsMap {
   'pull-out': {
     onProgress?: ProgressCallback;
-  }
+  };
 }
 
-type WorkerOptions<T extends ExecType> =
-  T extends keyof WorkerOptionsMap
-    ? WorkerOptionsMap[T]
-    : never;
+type WorkerOptions<T extends ExecType> = T extends keyof WorkerOptionsMap
+  ? WorkerOptionsMap[T]
+  : never;
 
 interface WorkerOutput {
   'pull-out': Edge[];
   'glob-files': string[];
-  'analyze': FullAnalysisResult['cycles'];
+  analyze: FullAnalysisResult['cycles'];
 }
 
-type WorkerEvent<T extends Record<string, any>> = { [K in keyof T]: { type: K; value: T[K] }}[keyof T];
+type WorkerEvent<T extends Record<string, any>> = {
+  [K in keyof T]: { type: K; value: T[K] };
+}[keyof T];
 
 if (!isMainThread) {
   const data: WorkerData = workerData;
@@ -64,8 +69,8 @@ if (!isMainThread) {
     const { files, cwd, absolute, alias } = data;
     const entries: Edge[] = [];
     type ParamType = WorkerEvent<{
-      finish: Edge[],
-      onProgress: Parameters<ProgressCallback>
+      finish: Edge[];
+      onProgress: Parameters<ProgressCallback>;
     }>;
 
     for (let i = 0; i < files.length; i++) {
@@ -78,12 +83,14 @@ if (!isMainThread) {
       });
 
       const deps: string[] = [];
-      const visitor = value => (value = getRealPathOfSpecifier(filename, value, alias)) && deps.push(value);
+      const visitor = (value) =>
+        (value = getRealPathOfSpecifier(filename, value, alias)) &&
+        deps.push(value);
       walkFile(filename, { onExportFrom: visitor, onImportFrom: visitor });
       entries.push(
         absolute
           ? [filename, deps]
-          : [relFileName, deps.map(v => path.relative(cwd, v))],
+          : [relFileName, deps.map((v) => path.relative(cwd, v))],
       );
     }
     postMessage<ParamType>({ type: 'finish', value: entries });
@@ -109,12 +116,9 @@ export function callWorker<
   E extends T['exec'] = T['exec'],
 >(workerData: T, options?: WorkerOptions<E>) {
   return new Promise<WorkerOutput[E]>((resolve, reject) => {
-    const worker = new Worker(
-      fileURLToPath(import.meta.url),
-      { workerData },
-    );
+    const worker = new Worker(fileURLToPath(import.meta.url), { workerData });
     worker.on('error', reject);
-    worker.on('message', data => {
+    worker.on('message', (data) => {
       if (data.type === 'finish') {
         resolve(data.value);
         worker.terminate();

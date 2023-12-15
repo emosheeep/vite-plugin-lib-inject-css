@@ -1,6 +1,14 @@
 import { chalk, fs, path } from 'zx';
 
-export const extensions = ['js', 'ts', 'jsx', 'tsx', 'vue', 'mjs', 'cjs'] as const;
+export const extensions = [
+  'js',
+  'ts',
+  'jsx',
+  'tsx',
+  'vue',
+  'mjs',
+  'cjs',
+] as const;
 export type Ext = (typeof extensions)[number];
 
 /**
@@ -8,10 +16,8 @@ export type Ext = (typeof extensions)[number];
  * @param {string} str
  * @returns {string}
  */
-export const removeTrailingSlash = str =>
-  /[/\\]$/.test(str)
-    ? removeTrailingSlash(str.slice(0, -1))
-    : str;
+export const removeTrailingSlash = (str) =>
+  /[/\\]$/.test(str) ? removeTrailingSlash(str.slice(0, -1)) : str;
 
 /**
  * Replace alias with real path.
@@ -33,7 +39,8 @@ export function replaceAlias(source: string, alias: Record<string, string>) {
  * Autocompletion for path suffixes.
  */
 export function revertExtension(origin: string) {
-  if (fs.existsSync(origin) && !fs.statSync(origin).isDirectory()) return origin;
+  if (fs.existsSync(origin) && !fs.statSync(origin).isDirectory())
+    return origin;
   for (const ext of extensions) {
     for (const result of [
       `${removeTrailingSlash(origin)}.${ext}`,
@@ -74,10 +81,12 @@ export function printCircles(circles: string[][] = []) {
   console.log('\n');
   for (let i = 0; i < circles.length; i++) {
     const items = circles[i];
-    console.log([
-      chalk.underline(`Circle.${i + 1} - ${items.length} files`),
-      ...items.map(v => `→ ${colorize(v)}`),
-    ].join('\n'));
+    console.log(
+      [
+        chalk.underline(`Circle.${i + 1} - ${items.length} files`),
+        ...items.map((v) => `→ ${colorize(v)}`),
+      ].join('\n'),
+    );
   }
   console.log('\n');
 }

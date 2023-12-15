@@ -3,13 +3,13 @@
 </template>
 
 <script setup>
-import { defineProps } from "vue";
+import { defineProps } from 'vue';
 defineProps({
   name: {
     type: String,
-    required: true
-  }
-})
+    required: true,
+  },
+});
 </script>
 
 <style>

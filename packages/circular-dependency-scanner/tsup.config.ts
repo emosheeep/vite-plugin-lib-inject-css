@@ -5,8 +5,5 @@ export default defineConfig({
   clean: true,
   dts: true,
   splitting: false,
-  entry: [
-    'src/index.ts',
-    'src/worker.ts',
-  ],
+  entry: ['src/index.ts', 'src/worker.ts'],
 });

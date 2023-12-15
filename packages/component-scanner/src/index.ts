@@ -39,80 +39,93 @@ export async function scanComponents(options?: ScanOptions) {
 
   if (verbose) {
     logger.info(`Working directory is ${chalk.underline.cyan(cwd)}`);
-    logger.info(`Ignored paths: ${ignore.map(v => chalk.yellow(v)).join(',')}`);
+    logger.info(
+      `Ignored paths: ${ignore.map((v) => chalk.yellow(v)).join(',')}`,
+    );
   }
 
   // Make paths absolute.
-  files = files.map(filename =>
-    path.isAbsolute(filename)
-      ? filename
-      : path.resolve(cwd, filename),
+  files = files.map((filename) =>
+    path.isAbsolute(filename) ? filename : path.resolve(cwd, filename),
   );
 
   const ctx: TaskCtx = { files: [...files], results: [], details: [] };
 
-  const runner = new Listr<TaskCtx>([
-    {
-      title: `Globbing files with ${chalk.underline.cyan(globPattern)}`,
-      skip: ctx => ctx.files.length
-        ? `Received ${chalk.cyan(files.length)} files, skip to glob files.`
-        : false,
-      task: async (_, task) => task.newListr([{
-        title: 'Wait a moment...',
+  const runner = new Listr<TaskCtx>(
+    [
+      {
+        title: `Globbing files with ${chalk.underline.cyan(globPattern)}`,
+        skip: (ctx) =>
+          ctx.files.length
+            ? `Received ${chalk.cyan(files.length)} files, skip to glob files.`
+            : false,
+        task: async (_, task) =>
+          task.newListr([
+            {
+              title: 'Wait a moment...',
+              task: async (ctx, task) => {
+                const files = await callWorker({
+                  exec: 'glob-files',
+                  pattern: globPattern,
+                  cwd,
+                  ignore,
+                });
+                task.title = `${chalk.cyan(files.length)} files were detected.`;
+                ctx.files = files;
+              },
+            },
+          ]),
+      },
+      {
+        title: 'Extracting component names from files...',
+        options: { bottomBar: 1 },
         task: async (ctx, task) => {
-          const files = await callWorker({
-            exec: 'glob-files',
-            pattern: globPattern,
-            cwd,
-            ignore,
-          });
-          task.title = `${chalk.cyan(files.length)} files were detected.`;
-          ctx.files = files;
+          ctx.details = await callWorker(
+            {
+              exec: 'scan-component',
+              cwd,
+              files: ctx.files,
+              libraryNames,
+              namingStyle,
+            },
+            {
+              ...visitors,
+              onProgress(filename, index, total) {
+                task.output = `${index + 1}/${total} - ${filename}`;
+              },
+            },
+          );
         },
-      }]),
-    },
+      },
+      {
+        title: 'Applying alias...',
+        options: { bottomBar: 1 },
+        task: async (ctx, task) => {
+          ctx.results = await callWorker(
+            {
+              exec: 'count-usage',
+              namingStyle,
+              alias,
+              details: ctx.details,
+            },
+            {
+              onProgress(filename, index, total) {
+                task.output = `${index + 1}/${total} - ${filename}`;
+              },
+            },
+          );
+        },
+      },
+    ],
     {
-      title: 'Extracting component names from files...',
-      options: { bottomBar: 1 },
-      task: async (ctx, task) => {
-        ctx.details = await callWorker({
-          exec: 'scan-component',
-          cwd,
-          files: ctx.files,
-          libraryNames,
-          namingStyle,
-        }, {
-          ...visitors,
-          onProgress(filename, index, total) {
-            task.output = `${index + 1}/${total} - ${filename}`;
-          },
-        });
+      // @ts-ignore
+      renderer: verbose ? 'default' : 'silent',
+      rendererOptions: {
+        showTimer: true,
+        collapse: false,
       },
     },
-    {
-      title: 'Applying alias...',
-      options: { bottomBar: 1 },
-      task: async (ctx, task) => {
-        ctx.results = await callWorker({
-          exec: 'count-usage',
-          namingStyle,
-          alias,
-          details: ctx.details,
-        }, {
-          onProgress(filename, index, total) {
-            task.output = `${index + 1}/${total} - ${filename}`;
-          },
-        });
-      },
-    },
-  ], {
-    // @ts-ignore
-    renderer: verbose ? 'default' : 'silent',
-    rendererOptions: {
-      showTimer: true,
-      collapse: false,
-    },
-  });
+  );
 
   await runner.run(ctx);
 
@@ -124,6 +137,10 @@ export async function scanComponents(options?: ScanOptions) {
  * @deprecated
  */
 export const scan: typeof scanComponents = (...args) => {
-  console.log(chalk.red('This function has been renamed to `scanComponents`, please use it instead.'));
+  console.log(
+    chalk.red(
+      'This function has been renamed to `scanComponents`, please use it instead.',
+    ),
+  );
   return scanComponents.call(this, ...args);
 };

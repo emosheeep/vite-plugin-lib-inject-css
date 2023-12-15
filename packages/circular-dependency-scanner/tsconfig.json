@@ -4,6 +4,7 @@
     "declarationMap": false,
     "emitDeclarationOnly": true,
     "declarationDir": "types",
+    "noUnusedLocals": true,
     "skipLibCheck": true,
     "allowJs": true,
     "allowSyntheticDefaultImports": true,

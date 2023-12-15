@@ -5,8 +5,11 @@ module.exports = defineConfig({
     es2021: true,
     node: true,
   },
+  plugins: ['prettier'],
   extends: [
     'standard',
+    'prettier',
+    'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
   ],
   parserOptions: {
@@ -15,8 +18,7 @@ module.exports = defineConfig({
   },
   rules: {
     semi: 'off',
-    indent: 'off',
-    'arrow-parens': ['error', 'as-needed'],
+    'arrow-parens': ['error', 'always'],
     'comma-dangle': 'off',
     'n/no-callback-literal': 'off',
     'space-before-function-paren': 'off',
@@ -25,12 +27,14 @@ module.exports = defineConfig({
     '@typescript-eslint/ban-ts-comment': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
     '@typescript-eslint/semi': ['error', 'always'],
-    '@typescript-eslint/indent': ['error', 2],
     '@typescript-eslint/comma-dangle': ['error', 'always-multiline'],
-    '@typescript-eslint/space-before-function-paren': ['error', {
-      anonymous: 'never',
-      named: 'never',
-      asyncArrow: 'always',
-    }],
+    '@typescript-eslint/space-before-function-paren': [
+      'error',
+      {
+        anonymous: 'never',
+        named: 'never',
+        asyncArrow: 'always',
+      },
+    ],
   },
 });

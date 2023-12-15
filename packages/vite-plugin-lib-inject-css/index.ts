@@ -5,7 +5,7 @@ import MagicString from 'magic-string';
 import type { Plugin, LibraryOptions, BuildOptions } from 'vite';
 
 export interface LibOptions extends LibraryOptions {
-  build?: BuildOptions
+  build?: BuildOptions;
   rollupOptions?: BuildOptions['rollupOptions'];
 }
 
@@ -21,10 +21,14 @@ export function libInjectCss(libOptions?: LibOptions): Plugin {
     apply: 'build',
     enforce: 'post',
     config() {
-      const { rollupOptions = {}, build, ...lib } = libOptions || {} as LibOptions;
+      const {
+        rollupOptions = {},
+        build,
+        ...lib
+      } = libOptions || ({} as LibOptions);
 
       let outputOptions = rollupOptions.output;
-      outputOptions = [outputOptions].flat().map(options => ({
+      outputOptions = [outputOptions].flat().map((options) => ({
         /**
          * By default, when creating multiple chunks, transitive imports of entry chunks will be added as empty imports to the entry chunks.
          * @see https://rollupjs.org/faqs/#why-do-additional-imports-turn-up-in-my-entry-chunks-when-code-splitting
@@ -34,9 +38,8 @@ export function libInjectCss(libOptions?: LibOptions): Plugin {
         ...options,
       }));
 
-      rollupOptions.output = outputOptions.length === 1
-        ? outputOptions[0]
-        : outputOptions;
+      rollupOptions.output =
+        outputOptions.length === 1 ? outputOptions[0] : outputOptions;
 
       return {
         build: {
@@ -63,34 +66,38 @@ export function libInjectCss(libOptions?: LibOptions): Plugin {
 
       if (!build.lib) {
         skipInject = true;
-        messages.push('Current build is not in library mode, skip code injection.');
+        messages.push(
+          'Current build is not in library mode, skip code injection.',
+        );
       }
 
       if (build.lib && build.cssCodeSplit === false) {
         messages.push(
           '`config.build.cssCodeSplit` is set to `true` by the plugin internally in library mode, ' +
-          'but it seems to be `false` now. This may cause style code injection to fail, ' +
-          'please check the configuration to prevent this option from being modified.',
+            'but it seems to be `false` now. This may cause style code injection to fail, ' +
+            'please check the configuration to prevent this option from being modified.',
         );
       }
 
       if (build.ssr && build.ssrEmitAssets === false) {
         messages.push(
           '`config.build.ssrEmitAssets` is set to `true` by the plugin internally in library mode, ' +
-          'but it seems to be `false` now. This may cause style code injection to fail on SSR, ' +
-          'please check the configuration to prevent this option from being modified.',
+            'but it seems to be `false` now. This may cause style code injection to fail on SSR, ' +
+            'please check the configuration to prevent this option from being modified.',
         );
       }
 
       const createPreserveModulesWarning = (optionPath: string) => {
         messages.push(
-          'When `' + optionPath + '` is `true`, ' +
-          'the association between chunk file and its css references will lose, ' +
-          'so the style code injection will be skipped.',
+          'When `' +
+            optionPath +
+            '` is `true`, ' +
+            'the association between chunk file and its css references will lose, ' +
+            'so the style code injection will be skipped.',
         );
       };
 
-      if (outputOptions.some(v => v?.preserveModules === true)) {
+      if (outputOptions.some((v) => v?.preserveModules === true)) {
         skipInject = true;
         createPreserveModulesWarning('rollupOptions.output.preserveModules');
       }
@@ -100,7 +107,11 @@ export function libInjectCss(libOptions?: LibOptions): Plugin {
         createPreserveModulesWarning('rollupOptions.preserveModules');
       }
 
-      messages.forEach(msg => console.log(`\n${color.cyan('[vite:lib-inject-css]:')} ${color.yellow(msg)}\n`));
+      messages.forEach((msg) =>
+        console.log(
+          `\n${color.cyan('[vite:lib-inject-css]:')} ${color.yellow(msg)}\n`,
+        ),
+      );
     },
     renderChunk(code, chunk) {
       if (skipInject || !chunk.viteMetadata) return;
@@ -113,8 +124,12 @@ export function libInjectCss(libOptions?: LibOptions): Plugin {
        */
       const ms = new MagicString(code);
       for (const cssFileName of importedCss) {
-        let cssFilePath = path.relative(path.dirname(chunk.fileName), cssFileName).replaceAll(/[\\/]+/g, '/'); // Replace all backslash or multiple slashes, fixed #9
-        cssFilePath = cssFilePath.startsWith('.') ? cssFilePath : `./${cssFilePath}`;
+        let cssFilePath = path
+          .relative(path.dirname(chunk.fileName), cssFileName)
+          .replaceAll(/[\\/]+/g, '/'); // Replace all backslash or multiple slashes, fixed #9
+        cssFilePath = cssFilePath.startsWith('.')
+          ? cssFilePath
+          : `./${cssFilePath}`;
         ms.prepend(`import '${cssFilePath}';\n`);
       }
       return {
@@ -147,7 +162,7 @@ export function scanEntries(entryDirs: string | string[]) {
     if (!entryDir) break;
 
     const flattenEntries = fs.statSync(entryDir).isDirectory()
-      ? fs.readdirSync(entryDir).map(v => path.resolve(entryDir, v))
+      ? fs.readdirSync(entryDir).map((v) => path.resolve(entryDir, v))
       : [entryDir];
 
     for (const entry of flattenEntries) {

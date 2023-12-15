@@ -2,12 +2,17 @@ import { workerData, parentPort, Worker, isMainThread } from 'worker_threads';
 import { path, globby } from 'zx';
 import { fileURLToPath } from 'url';
 import { type NamingStyle, transformNamingStyle } from './utils';
-import { walkFile, type Visitor, NamedImports, WrapperContainer } from './ast-helper';
+import {
+  walkFile,
+  type Visitor,
+  NamedImports,
+  WrapperContainer,
+} from './ast-helper';
 import { ScanOptions } from './options';
 
 export interface ComponentDetail {
   filename: string;
-  components: string[]
+  components: string[];
 }
 
 export interface Result extends ComponentDetail {
@@ -40,25 +45,26 @@ type WorkerData = GlobFiles | ScanComponent | CountUsage;
 
 type ExecType = WorkerData['exec'];
 
-type WorkerEvent<T extends Record<string, any>> = { [K in keyof T]: { type: K; value: T[K] }}[keyof T];
+type WorkerEvent<T extends Record<string, any>> = {
+  [K in keyof T]: { type: K; value: T[K] };
+}[keyof T];
 
 interface ProgressCallback {
-  (name: string, index: number, total: number): void
+  (name: string, index: number, total: number): void;
 }
 
 interface WorkerOptionsMap {
   'scan-component': Partial<Visitor> & {
     onProgress?: ProgressCallback;
-  }
+  };
   'count-usage': {
     onProgress?: ProgressCallback;
   };
 }
 
-type WorkerOptions<T extends ExecType> =
-  T extends keyof WorkerOptionsMap
-    ? WorkerOptionsMap[T]
-    : never;
+type WorkerOptions<T extends ExecType> = T extends keyof WorkerOptionsMap
+  ? WorkerOptionsMap[T]
+  : never;
 
 interface WorkerOutput {
   'glob-files': string[];
@@ -100,29 +106,31 @@ if (!isMainThread) {
       const detail: ComponentDetail = { filename: relFileName, components: [] };
 
       walkFile(filename, {
-        onTag: name => {
+        onTag: (name) => {
           if (name === WrapperContainer) return;
           name = transformNamingStyle(name, namingStyle);
           postMessage<EventParams>({ type: 'onTag', value: [name] });
           detail.components.push(name);
         },
-        onImport: info => {
+        onImport: (info) => {
           if (info.default) {
             info.default = transformNamingStyle(info.default, namingStyle);
           }
           if (info.named) {
-            info.named = info.named.map(v => Object.fromEntries(
-              Object.entries(v).map(([key, value]) => [
-                key,
-                transformNamingStyle(value, namingStyle),
-              ]),
-            )) as NamedImports;
+            info.named = info.named.map((v) =>
+              Object.fromEntries(
+                Object.entries(v).map(([key, value]) => [
+                  key,
+                  transformNamingStyle(value, namingStyle),
+                ]),
+              ),
+            ) as NamedImports;
           }
 
           postMessage<EventParams>({ type: 'onImport', value: [info] });
 
-          if (libraryNames?.some(key => info.path.startsWith(key))) {
-            info.named?.forEach(v => {
+          if (libraryNames?.some((key) => info.path.startsWith(key))) {
+            info.named?.forEach((v) => {
               // collect unaliased names as component
               detail.components.push(v.id);
             });
@@ -140,8 +148,8 @@ if (!isMainThread) {
   } else if (data.exec === 'count-usage') {
     const { namingStyle, details, alias = {} } = data;
 
-    const transformedAlias = Object.entries(alias)
-      .reduce((result, [realName, aliasNames]) => {
+    const transformedAlias = Object.entries(alias).reduce(
+      (result, [realName, aliasNames]) => {
         realName = transformNamingStyle(realName, namingStyle);
         for (const name of [aliasNames].flat()) {
           const aliasName = transformNamingStyle(name, namingStyle);
@@ -150,7 +158,9 @@ if (!isMainThread) {
           result.set(aliasName, set);
         }
         return result;
-      }, new Map<string, Set<string>>());
+      },
+      new Map<string, Set<string>>(),
+    );
 
     type EventParams = WorkerEvent<{
       finish: WorkerOutput['count-usage'];
@@ -168,13 +178,13 @@ if (!isMainThread) {
       });
 
       const usage: Result['usage'] = {};
-      const increase = name => (usage[name] = (usage[name] ?? 0) + 1);
+      const increase = (name) => (usage[name] = (usage[name] ?? 0) + 1);
       // Iterate components of each file
       for (let j = detail.components.length - 1; j >= 0; j--) {
         const originalName = detail.components[j];
         increase(originalName); // count origin name
         // If current name is an alias of another components, count them meanwhile.
-        transformedAlias.get(originalName)?.forEach(name => increase(name));
+        transformedAlias.get(originalName)?.forEach((name) => increase(name));
       }
       // filter empty results
       const names = Object.keys(usage);
@@ -207,13 +217,13 @@ export function callWorker<
   E extends T['exec'] = T['exec'],
 >(workerData: T, options?: WorkerOptions<E>) {
   return new Promise<WorkerOutput[E]>((resolve, reject) => {
-    const worker = new Worker(
-      fileURLToPath(import.meta.url),
-      { workerData },
-    );
+    const worker = new Worker(fileURLToPath(import.meta.url), { workerData });
     worker.on('error', reject);
-    worker.on('exit', code => code > 0 && reject(new Error(`Failed with exitCode ${code}`)));
-    worker.on('message', data => {
+    worker.on(
+      'exit',
+      (code) => code > 0 && reject(new Error(`Failed with exitCode ${code}`)),
+    );
+    worker.on('message', (data) => {
       if (data.type === 'finish') {
         resolve(data.value);
         worker.terminate();

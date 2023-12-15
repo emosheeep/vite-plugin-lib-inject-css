@@ -28,18 +28,27 @@ function handleImportFrom(node: ts.Node, callback) {
   if (!node || !callback) return;
   if (ts.isCallExpression(node)) {
     const { expression } = node;
-    if (/* require call */ ts.isIdentifier(expression) && expression.escapedText === 'require') {
+    if (
+      /* require call */ ts.isIdentifier(expression) &&
+      expression.escapedText === 'require'
+    ) {
       const arg0 = node.arguments[0];
       if (arg0 && ts.isStringLiteral(arg0)) {
         callback(arg0.text);
       }
-    } else if (/* import expression */ node.expression.kind === ts.SyntaxKind.ImportKeyword) {
+    } else if (
+      /* import expression */ node.expression.kind ===
+      ts.SyntaxKind.ImportKeyword
+    ) {
       const arg0 = node.arguments[0];
       if (arg0 && ts.isStringLiteral(arg0)) {
         callback(arg0.text);
       }
     }
-  } else if (ts.isImportDeclaration(node) && ts.isStringLiteral(node.moduleSpecifier)) {
+  } else if (
+    ts.isImportDeclaration(node) &&
+    ts.isStringLiteral(node.moduleSpecifier)
+  ) {
     callback(node.moduleSpecifier.text);
   }
 }
@@ -52,7 +61,7 @@ function handleImportFrom(node: ts.Node, callback) {
  * export { a }; // no export source
  * ```
  */
-function handleExportFrom(node:ts.Node, callback) {
+function handleExportFrom(node: ts.Node, callback) {
   if (!node || !callback) return;
   if (
     ts.isExportDeclaration(node) &&
@@ -65,7 +74,7 @@ function handleExportFrom(node:ts.Node, callback) {
 
 export function walkTsNode(node: ts.Node, cb: (node: ts.Node) => void) {
   cb(node);
-  node.forEachChild(child => walkTsNode(child, cb));
+  node.forEachChild((child) => walkTsNode(child, cb));
 }
 
 /**
@@ -85,8 +94,12 @@ export function walkFile(filename: string, visitor: Visitor = {}) {
  */
 export function walkScript(source: string, visitor: Visitor) {
   walkTsNode(
-    ts.createSourceFile('__virtual-filename.tsx', source, ts.ScriptTarget.ESNext),
-    node => {
+    ts.createSourceFile(
+      '__virtual-filename.tsx',
+      source,
+      ts.ScriptTarget.ESNext,
+    ),
+    (node) => {
       visitor.onImportFrom && handleImportFrom(node, visitor.onImportFrom);
       visitor.onExportFrom && handleExportFrom(node, visitor.onExportFrom);
     },

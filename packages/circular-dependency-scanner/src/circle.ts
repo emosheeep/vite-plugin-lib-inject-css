@@ -43,8 +43,16 @@ interface TaskCtx {
 /**
  * Detect circles among dependencies.
  */
-export async function circularDepsDetect(options?: DetectOptions): Promise<string[][]> {
-  let { cwd = process.cwd(), ignore = [], absolute = false, alias = {}, filter } = options || {} as DetectOptions;
+export async function circularDepsDetect(
+  options?: DetectOptions,
+): Promise<string[][]> {
+  let {
+    cwd = process.cwd(),
+    ignore = [],
+    absolute = false,
+    alias = {},
+    filter,
+  } = options || ({} as DetectOptions);
 
   /* ----------- Parameters pre-handle start ----------- */
 
@@ -52,80 +60,98 @@ export async function circularDepsDetect(options?: DetectOptions): Promise<strin
 
   // convert alias to absolute path
   alias = Object.fromEntries(
-    Object.entries(Object.assign({ '@': 'src' }, alias))
-      .map(([from, to]) => [from, path.resolve(cwd, to)]),
+    Object.entries(Object.assign({ '@': 'src' }, alias)).map(([from, to]) => [
+      from,
+      path.resolve(cwd, to),
+    ]),
   );
 
   /* ------------ Parameters pre-handle end ------------ */
 
   const globPattern = `**/*.{${extensions.join(',')}}`;
 
-  logger.info(`Working directory is ${chalk.underline.cyan(path.resolve(cwd))}`);
-  logger.info(`Ignored paths: ${ignore.map(v => chalk.yellow(v)).join(',')}`);
+  logger.info(
+    `Working directory is ${chalk.underline.cyan(path.resolve(cwd))}`,
+  );
+  logger.info(`Ignored paths: ${ignore.map((v) => chalk.yellow(v)).join(',')}`);
 
   const ctx: TaskCtx = { entries: [], result: [], files: [] };
 
-  const runner = new Listr<TaskCtx>([
-    {
-      title: `Globbing files with ${chalk.underline.cyan(globPattern)}`,
-      task: async (_, task) => task.newListr([{
-        title: 'Wait a moment...',
+  const runner = new Listr<TaskCtx>(
+    [
+      {
+        title: `Globbing files with ${chalk.underline.cyan(globPattern)}`,
+        task: async (_, task) =>
+          task.newListr([
+            {
+              title: 'Wait a moment...',
+              task: async (ctx, task) => {
+                const files = await callWorker({
+                  exec: 'glob-files',
+                  pattern: globPattern,
+                  cwd,
+                  ignore,
+                });
+                task.title = `${chalk.cyan(files.length)} files were detected.`;
+                ctx.files = files;
+              },
+            },
+          ]),
+      },
+      {
+        title: 'Pulling out import specifiers from files...',
+        options: { bottomBar: 1 },
         task: async (ctx, task) => {
-          const files = await callWorker({
-            exec: 'glob-files',
-            pattern: globPattern,
-            cwd,
-            ignore,
-          });
-          task.title = `${chalk.cyan(files.length)} files were detected.`;
-          ctx.files = files;
+          ctx.entries = await callWorker(
+            {
+              exec: 'pull-out',
+              cwd,
+              absolute,
+              alias,
+              files: ctx.files,
+            },
+            {
+              onProgress(filename, index, total) {
+                task.output = `${index + 1}/${total} - ${filename}`;
+              },
+            },
+          );
         },
-      }]),
-    },
+      },
+      {
+        title: 'Analyzing circular dependencies...',
+        task: async (_, task) =>
+          task.newListr([
+            {
+              title: 'Wait a moment...',
+              task: async (ctx, task) => {
+                let result = await callWorker({
+                  exec: 'analyze',
+                  entries: ctx.entries,
+                });
+
+                if (filter) {
+                  const matcher = minimatch.filter(filter);
+                  result = result.filter((v) => v.some(matcher));
+                }
+
+                task.title = `${chalk.cyan(result.length)} circles were found${
+                  filter ? `, filtered with ${chalk.yellow(filter)}` : ''
+                }.`;
+
+                ctx.result = result;
+              },
+            },
+          ]),
+      },
+    ],
     {
-      title: 'Pulling out import specifiers from files...',
-      options: { bottomBar: 1 },
-      task: async (ctx, task) => {
-        ctx.entries = await callWorker({
-          exec: 'pull-out',
-          cwd,
-          absolute,
-          alias,
-          files: ctx.files,
-        }, {
-          onProgress(filename, index, total) {
-            task.output = `${index + 1}/${total} - ${filename}`;
-          },
-        });
+      rendererOptions: {
+        collapseSubtasks: false,
+        timer: PRESET_TIMER,
       },
     },
-    {
-      title: 'Analyzing circular dependencies...',
-      task: async (_, task) => task.newListr([{
-        title: 'Wait a moment...',
-        task: async (ctx, task) => {
-          let result = await callWorker({
-            exec: 'analyze',
-            entries: ctx.entries,
-          });
-
-          if (filter) {
-            const matcher = minimatch.filter(filter);
-            result = result.filter(v => v.some(matcher));
-          }
-
-          task.title = `${chalk.cyan(result.length)} circles were found${filter ? `, filtered with ${chalk.yellow(filter)}` : ''}.`;
-
-          ctx.result = result;
-        },
-      }]),
-    },
-  ], {
-    rendererOptions: {
-      collapseSubtasks: false,
-      timer: PRESET_TIMER,
-    },
-  });
+  );
 
   await runner.run(ctx);
 
