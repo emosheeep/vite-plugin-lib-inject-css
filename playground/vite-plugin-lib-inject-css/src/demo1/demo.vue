@@ -3,13 +3,15 @@
 </template>
 
 <script setup>
-import { defineProps } from 'vue';
+import { defineProps, onMounted } from 'vue';
+import { test } from '../common';
 defineProps({
   name: {
     type: String,
     required: true,
   },
 });
+onMounted(test)
 </script>
 
 <style>

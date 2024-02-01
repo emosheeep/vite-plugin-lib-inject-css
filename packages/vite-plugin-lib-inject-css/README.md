@@ -35,6 +35,48 @@ But when it comes to component library development, multiple entries are often i
  
 Based on this, we need to write a plugin to try to find the relationship between the two, and inject styles correctly.
 
+# Usage
+
+Install:
+
+
+```shell
+pnpm i vite-plugin-lib-inject-css -D # npm/yarn
+```
+
+Config:
+
+```js
+// vite.config.ts
+import { libInjectCss } from 'vite-plugin-lib-inject-css';
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [
+    libInjectCss(),
+  ],
+  build: {
+    lib: {
+      format: ['es'],
+      entry: {
+        index: 'src/index.ts',
+        button: 'src/components/button/index.ts',
+        select: 'src/components/select/index.ts',
+      },
+    }
+    rollupOptions: {
+      output: {
+        // Put chunk files at <output>/chunks
+        chunkFileNames: 'chunks/[name].[hash].js',
+        // Put chunk styles at <output>/assets
+        assetFileNames: 'assets/[name][extname]',
+        entryFileNames: '[name].js',
+      },
+    },
+  }
+})
+```
+
 # How does it work
 
 As a library(mostly component library), we want to import styles automatically when referencing the component.
@@ -69,56 +111,6 @@ In fact, vite adds a property named `viteMetadata` on each chunk file in plugin 
 We can get which resources(include CSS files) are associated with current chunk file by using this property. Based on this, the plugin injects styles by using [renderChunk](https://rollupjs.org/plugin-development/#renderchunk) hook, which is the simplest and most effective way.
 
 *Prefer to check plugin source code to get more information and welcome to make contribution*, which is simple enough(100+ lines).
-
-# Usage
-
-Install:
-
-
-```shell
-pnpm i vite-plugin-lib-inject-css -D # npm/yarn
-```
-
-Config:
-
-```js
-// vite.config.ts
-import { libInjectCss, scanEntries } from 'vite-plugin-lib-inject-css';
-
-// https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [
-    libInjectCss(), // For a simple usage
-    // Parameters are optional, which is only an alias, aim to make configs concise.
-    libInjectCss({
-      format: ['es'],
-      entry: {
-        index: 'src/index.ts', // Don't forget the main entry!
-        button: 'src/components/button/index.ts',
-        select: 'src/components/select/index.ts',
-        // Uses with a similar directory structure.
-        ...scanEntries([
-          'src/components',
-          'src/hooks',
-        ])
-      },
-      rollupOptions: {
-        output: {
-          // Put chunk files at <output>/chunks
-          chunkFileNames: 'chunks/[name].[hash].js',
-          // Put chunk styles at <output>/assets
-          assetFileNames: 'assets/[name][extname]',
-          entryFileNames: '[name].js',
-        },
-      },
-      build: {
-        emptyOutDir: false,
-        // ...
-      }
-    }),
-  ],
-})
-```
 
 # Recipes of creating component library
 
