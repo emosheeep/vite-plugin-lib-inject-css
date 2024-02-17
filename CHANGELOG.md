@@ -1,23 +1,26 @@
+# vite-plugin-lib-inject-css
+
 # 2.0.0
 
+- feat!: pure esm module.
 - refactor!: remove unnecessary plugin params and `scanEntries` function, make it simple and focus on code injection.
-- fix: error occurs when uses with storybook builder vite, closed [#15](https://github.com/emosheeep/fe-tools/issues/15).
+- fix: error occurs when uses with storybook builder vite, closed [#15](https://github.com/emosheeep/vite-plugin-lib-inject-css/issues/15).
 - chore: upgrade ecosystem dependencies(vite v5 & rollup v4).
 
 # 1.3.0
 
-- feat: emit css files on SSR build. Closed [#12](https://github.com/emosheeep/fe-tools/issues/12).
+- feat: emit css files on SSR build. Closed [#12](https://github.com/emosheeep/vite-plugin-lib-inject-css/issues/12).
 - docs: improve documentation.
 
 # 1.2.1
 
-- fix: cross-platform path handling. Closes [#9](https://github.com/emosheeep/fe-tools/issues/9).
+- fix: cross-platform path handling. Closes [#9](https://github.com/emosheeep/vite-plugin-lib-inject-css/issues/9).
 - docs: add more details about `preserveModules` option in README.
 - chore: upgrade dependencies.
 
 # 1.2.0
 
-- chore: show warnings for `preserveModules` also for deprecated `rollupOptions.preserveModules`. closed [#5](https://github.com/emosheeep/fe-tools/issues/5).
+- chore: show warnings for `preserveModules` also for deprecated `rollupOptions.preserveModules`. closed [#5](https://github.com/emosheeep/vite-plugin-lib-inject-css/issues/5).
 
 # 1.1.0
 

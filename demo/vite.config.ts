@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
-import { libInjectCss } from 'vite-plugin-lib-inject-css';
 import dtsPlugin from 'vite-plugin-dts';
+import { libInjectCss } from '../src/index';
 
 export default defineConfig({
   plugins: [vue(), libInjectCss(), dtsPlugin()],

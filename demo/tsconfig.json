@@ -12,7 +12,7 @@
     "noImplicitAny": false,
     "outDir": "dist",
     "baseUrl": ".",
-    "types": ["node", "vite/client"],
+    "types": ["node"],
     "lib": ["esnext"]
   },
   "include": ["**/*.ts"],

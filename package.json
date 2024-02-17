@@ -1,28 +1,83 @@
 {
-  "name": "@emo/fe-tools",
-  "private": true,
-  "description": "This is a monorepo for front end tools.",
+  "name": "vite-plugin-lib-inject-css",
+  "version": "2.0.0",
+  "type": "module",
+  "description": "Inject css at the top of chunk file in lib mode using `import` statement, support multiple entries.",
   "author": "秦旭洋 <emosheep@qq.com>",
+  "packageManager": "pnpm@8.15.1",
   "license": "MIT",
-  "packageManager": "pnpm@8.12.1",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "CHANGELOG.md"
+  ],
   "scripts": {
-    "prepare": "husky install",
-    "lint": "eslint . --fix --ext .js,.ts"
+    "prepare": "simple-git-hooks",
+    "prepublishOnly": "npm run build",
+    "watch": "tsup --watch",
+    "build": "tsup",
+    "lint": "eslint . --ext .ts,.js",
+    "changeset": "changeset",
+    "versions": "changeset version"
+  },
+  "dependencies": {
+    "magic-string": "^0.30.7",
+    "picocolors": "^1.0.0"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^6.14.0",
-    "@typescript-eslint/parser": "^6.14.0",
-    "eslint": "^8.55.0",
+    "@changesets/cli": "^2.27.1",
+    "@commitlint/cli": "^18.6.1",
+    "@commitlint/config-conventional": "^18.6.2",
+    "@types/node": "^20.11.19",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-config-standard": "^17.1.0",
-    "eslint-define-config": "^2.0.0",
+    "eslint-define-config": "^2.1.0",
     "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-n": "^15.7.0",
-    "eslint-plugin-prettier": "^5.0.1",
+    "eslint-plugin-n": "^16.6.2",
+    "eslint-plugin-prettier": "^5.1.3",
     "eslint-plugin-promise": "^6.1.1",
-    "husky": "^8.0.3",
-    "lint-staged": "^15.2.0",
-    "prettier": "^3.1.1",
-    "typescript": "^5.3.3"
-  }
+    "lint-staged": "^15.2.2",
+    "prettier": "^3.2.5",
+    "simple-git-hooks": "^2.9.0",
+    "tsup": "^8.0.2",
+    "typescript": "^5.3.3",
+    "vite": "^5.1.3"
+  },
+  "peerDependencies": {
+    "vite": "*"
+  },
+  "simple-git-hooks": {
+    "commit-msg": "npx commitlint -e",
+    "pre-commit": "npx lint-staged && npx tsc --noEmit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/emosheeep/vite-plugin-lib-inject-css"
+  },
+  "keywords": [
+    "vite",
+    "plugin",
+    "lib",
+    "build",
+    "vite-lib",
+    "vite-plugin",
+    "vite-build",
+    "css",
+    "style",
+    "styles",
+    "inject",
+    "inline"
+  ]
 }

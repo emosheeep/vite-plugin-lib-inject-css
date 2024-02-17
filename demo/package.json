@@ -1,6 +1,7 @@
 {
   "name": "vite-plugin-lib-inject-css-demo",
   "description": "This is a demo for vite-plugin-lib-inject-css",
+  "type": "module",
   "main": "dist/index.mjs",
   "scripts": {
     "watch": "vite build --watch",
@@ -24,7 +25,6 @@
     "typescript": "^4.9.5",
     "vite": "^5.0.12",
     "vite-plugin-dts": "^3.7.2",
-    "vite-plugin-lib-inject-css": "workspace:*",
     "vue": "^3.4.15"
   }
 }
