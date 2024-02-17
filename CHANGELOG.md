@@ -2,6 +2,8 @@
 
 # 2.0.0
 
+### Major Changes
+
 - feat!: pure esm module.
 - refactor!: remove unnecessary plugin params and `scanEntries` function, make it simple and focus on code injection.
 - fix: error occurs when uses with storybook builder vite, closed [#15](https://github.com/emosheeep/vite-plugin-lib-inject-css/issues/15).

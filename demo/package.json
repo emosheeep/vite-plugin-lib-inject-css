@@ -1,5 +1,7 @@
 {
-  "name": "vite-plugin-lib-inject-css-demo",
+  "name": "plugin-demo",
+  "version": "0.0.0",
+  "private": true,
   "description": "This is a demo for vite-plugin-lib-inject-css",
   "type": "module",
   "main": "dist/index.mjs",
