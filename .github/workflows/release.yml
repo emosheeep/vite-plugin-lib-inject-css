@@ -1,0 +1,39 @@
+# https://github.com/changesets/action
+name: Release Package
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types:
+      - closed
+    branches: # target branch
+      - master
+
+permissions:
+  pull-requests: write
+  contents: write
+
+jobs:
+  release-package:
+    if: github.event.pull_request.merged || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - uses: pnpm/action-setup@v2.2.4
+        with:
+          version: 8
+          run_install: true
+
+      # consume changesets and create pr if it exists, otherwise publish package
+      - name: Create Release Pull Request or Publish to npm
+        uses: changesets/action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        with:
+          publish: npx changeset publish
+          commit: "chore: versioning package"
+          title: "chore:versioning package"
