@@ -99,29 +99,39 @@ export function libInjectCss(): Plugin {
         ),
       );
     },
-    renderChunk(code, chunk) {
-      if (skipInject || !chunk.viteMetadata) return;
-      const { importedCss } = chunk.viteMetadata;
-      if (!importedCss.size) return;
+    generateBundle({ format }, bundle) {
+      if (skipInject) return;
 
-      /**
-       * Inject the referenced style files at the top of the chunk.
-       * Delegate the task of how to handle these files to the user's build tool.
-       */
-      const ms = new MagicString(code);
-      for (const cssFileName of importedCss) {
-        let cssFilePath = path
-          .relative(path.dirname(chunk.fileName), cssFileName)
-          .replaceAll(/[\\/]+/g, '/'); // Replace all backslash or multiple slashes, fixed #9
-        cssFilePath = cssFilePath.startsWith('.')
-          ? cssFilePath
-          : `./${cssFilePath}`;
-        ms.prepend(`import '${cssFilePath}';\n`);
+      for (const chunk of Object.values(bundle)) {
+        if (chunk.type !== 'chunk' || !chunk.viteMetadata?.importedCss.size) {
+          continue;
+        }
+
+        /**
+         * Inject the referenced style files at the top of the chunk.
+         * Delegate the task of how to handle these files to the user's build tool.
+         */
+        const ms = new MagicString(chunk.code);
+        for (const cssFileName of chunk.viteMetadata.importedCss) {
+          let cssFilePath = path
+            .relative(path.dirname(chunk.fileName), cssFileName)
+            .replaceAll(/[\\/]+/g, '/'); // Replace all backslash or multiple slashes, fixed #9
+          cssFilePath = cssFilePath.startsWith('.')
+            ? cssFilePath
+            : `./${cssFilePath}`;
+          ms.prepend(
+            format === 'es'
+              ? `import '${cssFilePath}';\n`
+              : `require('${cssFilePath}');`,
+          );
+        }
+
+        // update code and sourcemap
+        chunk.code = ms.toString();
+        if (resolvedConfig.build.sourcemap) {
+          chunk.map = ms.generateMap({ hires: 'boundary' });
+        }
       }
-      return {
-        code: ms.toString(),
-        map: ms.generateMap(),
-      };
     },
   };
 }

@@ -5,6 +5,7 @@
 <script setup>
 import { defineProps, onMounted } from 'vue';
 import { test } from '../common';
+import '../common.css';
 defineProps({
   name: {
     type: String,
@@ -18,5 +19,6 @@ onMounted(test)
 .greeting {
   display: flex;
   justify-content: center;
+  color: red;
 }
 </style>
