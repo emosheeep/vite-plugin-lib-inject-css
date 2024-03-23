@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [vue(), libInjectCss(), dtsPlugin()],
   build: {
     lib: {
-      formats: ['es'],
+      formats: ['es', 'cjs'],
       entry: [
         'src/index.ts',
         'src/common.ts',

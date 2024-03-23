@@ -3,3 +3,4 @@ dist
 types
 .idea
 .DS_Store
+storybook-static
