@@ -4,7 +4,7 @@
 
 ### Patch Changes
 
-- fix: Multiple entry mode, when multiple files are import the same css file, inject css will not work. closed [#18](https://github.com/emosheeep/vite-plugin-lib-inject-css/issues/18)
+- fix: code injection failed when multiple entries are importing a same style file. closed [#18](https://github.com/emosheeep/vite-plugin-lib-inject-css/issues/18)
 - chore: upgrade dependencies.
 
 # 2.0.0
