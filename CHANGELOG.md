@@ -1,5 +1,12 @@
 # vite-plugin-lib-inject-css
 
+## 2.1.0
+
+### Minor Changes
+
+- fix: adjust code injection position to prevent top line directive from being invalid [#21](https://github.com/emosheeep/vite-plugin-lib-inject-css/issues/21).
+- chore: update dependencies.
+
 ## 2.0.1
 
 ### Patch Changes

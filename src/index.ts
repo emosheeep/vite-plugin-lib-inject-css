@@ -2,6 +2,11 @@ import path from 'path';
 import color from 'picocolors';
 import MagicString from 'magic-string';
 import type { Plugin, ResolvedConfig } from 'vite';
+import { js } from '@ast-grep/napi';
+
+const pluginName = 'vite:lib-inject-css';
+
+const excludeTokens = new Set(['expression_statement', 'import_statement']);
 
 const createPreserveModulesWarning = (optionPath: string) =>
   'When `' +
@@ -20,7 +25,7 @@ export function libInjectCss(): Plugin {
   let resolvedConfig: ResolvedConfig;
 
   return {
-    name: 'vite:lib-inject-css',
+    name: pluginName,
     apply: 'build',
     enforce: 'post',
     config({ build }) {
@@ -95,7 +100,7 @@ export function libInjectCss(): Plugin {
 
       messages.forEach((msg) =>
         console.log(
-          `\n${color.cyan('[vite:lib-inject-css]')} ${color.yellow(msg)}\n`,
+          `\n${color.cyan(`[${pluginName}]`)} ${color.yellow(msg)}\n`,
         ),
       );
     },
@@ -107,11 +112,20 @@ export function libInjectCss(): Plugin {
           continue;
         }
 
+        const node = js
+          .parse(chunk.code)
+          .root()
+          .children()
+          // find the first element that don't be included.
+          .find((node) => !excludeTokens.has(node.kind()));
+
+        const position = node?.range().start.index ?? 0;
+
         /**
          * Inject the referenced style files at the top of the chunk.
          * Delegate the task of how to handle these files to the user's build tool.
          */
-        const ms = new MagicString(chunk.code);
+        let code = chunk.code;
         for (const cssFileName of chunk.viteMetadata.importedCss) {
           let cssFilePath = path
             .relative(path.dirname(chunk.fileName), cssFileName)
@@ -119,16 +133,19 @@ export function libInjectCss(): Plugin {
           cssFilePath = cssFilePath.startsWith('.')
             ? cssFilePath
             : `./${cssFilePath}`;
-          ms.prepend(
+
+          const injection =
             format === 'es'
-              ? `import '${cssFilePath}';\n`
-              : `require('${cssFilePath}');`,
-          );
+              ? `import '${cssFilePath}';`
+              : `require('${cssFilePath}');`;
+
+          code = code.slice(0, position) + injection + code.slice(position);
         }
 
         // update code and sourcemap
-        chunk.code = ms.toString();
+        chunk.code = code;
         if (resolvedConfig.build.sourcemap) {
+          const ms = new MagicString(code);
           chunk.map = ms.generateMap({ hires: 'boundary' });
         }
       }
