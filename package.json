@@ -1,10 +1,10 @@
 {
   "name": "vite-plugin-lib-inject-css",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "type": "module",
   "description": "Inject css at the top of chunk file in lib mode using `import` statement, support multiple entries.",
   "author": "秦旭洋 <emosheep@qq.com>",
-  "packageManager": "pnpm@9.0.5",
+  "packageManager": "pnpm@9.1.1",
   "license": "MIT",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -30,7 +30,7 @@
     "versions": "changeset version"
   },
   "dependencies": {
-    "@ast-grep/napi": "^0.21.1",
+    "@ast-grep/napi": "^0.22.3",
     "magic-string": "^0.30.10",
     "picocolors": "^1.0.0"
   },
@@ -38,7 +38,7 @@
     "@changesets/cli": "^2.27.1",
     "@commitlint/cli": "^18.6.1",
     "@commitlint/config-conventional": "^18.6.3",
-    "@types/node": "^20.12.7",
+    "@types/node": "^20.12.11",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
     "eslint": "^8.57.0",
@@ -54,7 +54,7 @@
     "simple-git-hooks": "^2.11.1",
     "tsup": "^8.0.2",
     "typescript": "^5.4.5",
-    "vite": "^5.2.10"
+    "vite": "^5.2.11"
   },
   "peerDependencies": {
     "vite": "*"

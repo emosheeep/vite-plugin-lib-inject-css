@@ -12,21 +12,21 @@
     "build-storybook": "storybook build"
   },
   "devDependencies": {
-    "@storybook/addon-essentials": "^8.0.9",
-    "@storybook/addon-interactions": "^8.0.9",
-    "@storybook/addon-links": "^8.0.9",
-    "@storybook/blocks": "^8.0.9",
-    "@storybook/test": "^8.0.9",
-    "@storybook/vue3": "^8.0.9",
-    "@storybook/vue3-vite": "^8.0.9",
-    "@types/node": "^20.12.7",
+    "@storybook/addon-essentials": "^8.0.10",
+    "@storybook/addon-interactions": "^8.0.10",
+    "@storybook/addon-links": "^8.0.10",
+    "@storybook/blocks": "^8.0.10",
+    "@storybook/test": "^8.0.10",
+    "@storybook/vue3": "^8.0.10",
+    "@storybook/vue3-vite": "^8.0.10",
+    "@types/node": "^20.12.11",
     "@vitejs/plugin-vue": "^4.6.2",
-    "react": "^18.3.0",
-    "react-dom": "^18.3.0",
-    "storybook": "^8.0.9",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "storybook": "^8.0.10",
     "typescript": "^5.4.5",
-    "vite": "^5.2.10",
-    "vite-plugin-dts": "^3.9.0",
-    "vue": "^3.4.25"
+    "vite": "^5.2.11",
+    "vite-plugin-dts": "^3.9.1",
+    "vue": "^3.4.27"
   }
 }

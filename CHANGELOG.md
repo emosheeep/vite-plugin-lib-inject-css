@@ -1,5 +1,11 @@
 # vite-plugin-lib-inject-css
 
+## 2.1.1
+
+### Patch Changes
+
+- fix: upgrade ecosystem dependencies, fix [#23](https://github.com/emosheeep/vite-plugin-lib-inject-css/issues/23)
+
 ## 2.1.0
 
 ### Minor Changes
