@@ -54,7 +54,7 @@ export default defineConfig({
   ],
   build: {
     lib: {
-      format: ['es'],
+      formats: ['es'],
       entry: {
         index: 'src/index.ts',
         button: 'src/components/button/index.ts',
