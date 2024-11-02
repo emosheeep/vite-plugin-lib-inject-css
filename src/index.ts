@@ -1,23 +1,23 @@
-import path from 'path';
-import color from 'picocolors';
-import MagicString from 'magic-string';
 import type { Plugin, ResolvedConfig } from 'vite';
+import path from 'node:path';
 import { js } from '@ast-grep/napi';
+import MagicString from 'magic-string';
+import color from 'picocolors';
 
 const pluginName = 'vite:lib-inject-css';
 
 const excludeTokens = new Set(['expression_statement', 'import_statement']);
 
-const createPreserveModulesWarning = (optionPath: string) =>
-  'When `' +
-  optionPath +
-  '` is `true`, ' +
-  'the association between chunk file and its css references will lose, ' +
-  'so the style code injection will be skipped.';
+function createPreserveModulesWarning(optionPath: string) {
+  return (
+    `When \`${optionPath}\` is \`true\`, `
+    + `the association between chunk file and its css references will lose, `
+    + `so the style code injection will be skipped.`
+  );
+}
 
 /**
  * Inject css at the top of each generated chunk file, only works with library mode.
- * @param libOptions Optional libOptions which will overwrite the relevant options.
  */
 export function libInjectCss(): Plugin {
   let skipInject = false;
@@ -80,9 +80,9 @@ export function libInjectCss(): Plugin {
 
       /** rollupOptions.preserveModules is only exist below version 4 */
       if (
-        parseInt(this.meta.rollupVersion) < 4 &&
+        Number.parseInt(this.meta.rollupVersion) < 4
         // @ts-ignore
-        build.rollupOptions.preserveModules === true
+        && build.rollupOptions.preserveModules === true
       ) {
         skipInject = true;
         messages.push(
@@ -92,9 +92,9 @@ export function libInjectCss(): Plugin {
 
       if (build.ssr && build.ssrEmitAssets === false) {
         messages.push(
-          '`config.build.ssrEmitAssets` is set to `true` by the plugin internally in library mode, ' +
-            'but it seems to be `false` now. This may cause style code injection to fail on SSR, ' +
-            'please check the configuration to prevent this option from being modified.',
+          '`config.build.ssrEmitAssets` is set to `true` by the plugin internally in library mode, '
+          + 'but it seems to be `false` now. This may cause style code injection to fail on SSR, '
+          + 'please check the configuration to prevent this option from being modified.',
         );
       }
 
@@ -105,7 +105,8 @@ export function libInjectCss(): Plugin {
       );
     },
     generateBundle({ format }, bundle) {
-      if (skipInject) return;
+      if (skipInject)
+        return;
 
       for (const chunk of Object.values(bundle)) {
         if (chunk.type !== 'chunk' || !chunk.viteMetadata?.importedCss.size) {
@@ -134,8 +135,8 @@ export function libInjectCss(): Plugin {
             ? cssFilePath
             : `./${cssFilePath}`;
 
-          const injection =
-            format === 'es'
+          const injection
+            = format === 'es'
               ? `import '${cssFilePath}';`
               : `require('${cssFilePath}');`;
 

@@ -78,8 +78,8 @@ export default defineConfig({
 
 Vite shines in Web project development, but it can also be used for library projects.
 
-But when it comes to component library development, multiple entries are often involved. Although `Vite 3.2+` later supports multiple entry points, it doesn't provide relevant options for us to associate css with component, which leads to the problem that we can't distinguish between the entry point and css files even though the bundle is successful. 
- 
+But when it comes to component library development, multiple entries are often involved. Although `Vite 3.2+` later supports multiple entry points, it doesn't provide relevant options for us to associate css with component, which leads to the problem that we can't distinguish between the entry point and css files even though the bundle is successful.
+
 Based on this, we need to write a plugin to try to find the relationship between the two, and inject styles correctly.
 
 # How does it work
@@ -92,7 +92,7 @@ import './assets/button.css'; // This is what this plugin do;
 ...
 export default Button;
 
-/** component-lib/dist/index.js */ 
+/** component-lib/dist/index.js */
 import Button from './button.js';
 import xxx from './xxx.js';
 export { Button, xxx };

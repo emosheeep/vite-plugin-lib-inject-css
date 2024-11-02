@@ -12,7 +12,7 @@ defineProps({
     required: true,
   },
 });
-onMounted(test)
+onMounted(test);
 </script>
 
 <style>

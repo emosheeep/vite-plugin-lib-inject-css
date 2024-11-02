@@ -1,4 +1,4 @@
-import { type App } from 'vue';
+import type { App } from 'vue';
 import { Demo1 } from './demo1';
 import { Demo2 } from './demo2';
 

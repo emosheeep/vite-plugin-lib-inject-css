@@ -1,68 +1,11 @@
 {
   "name": "vite-plugin-lib-inject-css",
-  "version": "2.1.1",
   "type": "module",
+  "version": "2.1.1",
+  "packageManager": "pnpm@9.1.1",
   "description": "Inject css at the top of chunk file in lib mode using `import` statement, support multiple entries.",
   "author": "秦旭洋 <emosheep@qq.com>",
-  "packageManager": "pnpm@9.1.1",
   "license": "MIT",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "require": "./dist/index.cjs",
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    }
-  },
-  "files": [
-    "dist",
-    "CHANGELOG.md"
-  ],
-  "scripts": {
-    "prepare": "simple-git-hooks",
-    "prepublishOnly": "npm run build",
-    "watch": "tsup --watch",
-    "build": "tsup",
-    "lint": "eslint . --ext .ts,.js",
-    "changeset": "changeset",
-    "versions": "changeset version"
-  },
-  "dependencies": {
-    "@ast-grep/napi": "^0.22.3",
-    "magic-string": "^0.30.10",
-    "picocolors": "^1.0.0"
-  },
-  "devDependencies": {
-    "@changesets/cli": "^2.27.1",
-    "@commitlint/cli": "^18.6.1",
-    "@commitlint/config-conventional": "^18.6.3",
-    "@types/node": "^20.12.11",
-    "@typescript-eslint/eslint-plugin": "^6.21.0",
-    "@typescript-eslint/parser": "^6.21.0",
-    "eslint": "^8.57.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-config-standard": "^17.1.0",
-    "eslint-define-config": "^2.1.0",
-    "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-n": "^16.6.2",
-    "eslint-plugin-prettier": "^5.1.3",
-    "eslint-plugin-promise": "^6.1.1",
-    "lint-staged": "^15.2.2",
-    "prettier": "^3.2.5",
-    "simple-git-hooks": "^2.11.1",
-    "tsup": "^8.0.2",
-    "typescript": "^5.4.5",
-    "vite": "^5.2.11"
-  },
-  "peerDependencies": {
-    "vite": "*"
-  },
-  "simple-git-hooks": {
-    "commit-msg": "npx commitlint -e",
-    "pre-commit": "npx lint-staged && npx tsc --noEmit"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/emosheeep/vite-plugin-lib-inject-css"
@@ -80,5 +23,55 @@
     "styles",
     "inject",
     "inline"
-  ]
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "CHANGELOG.md",
+    "dist"
+  ],
+  "scripts": {
+    "prepare": "simple-git-hooks",
+    "prepublishOnly": "npm run build",
+    "watch": "tsup --watch",
+    "build": "tsup",
+    "lint": "eslint . --fix",
+    "format": "biome format . --write",
+    "changeset": "changeset",
+    "versions": "changeset version"
+  },
+  "peerDependencies": {
+    "vite": "*"
+  },
+  "dependencies": {
+    "@ast-grep/napi": "^0.29.0",
+    "magic-string": "^0.30.12",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^3.8.0",
+    "@biomejs/biome": "^1.9.4",
+    "@changesets/cli": "^2.27.9",
+    "@commitlint/cli": "^19.5.0",
+    "@commitlint/config-conventional": "^19.5.0",
+    "@types/node": "^20.17.5",
+    "eslint": "^9.14.0",
+    "lint-staged": "^15.2.10",
+    "simple-git-hooks": "^2.11.1",
+    "tsup": "^8.3.5",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.10"
+  },
+  "simple-git-hooks": {
+    "commit-msg": "npx commitlint -e",
+    "pre-commit": "npx lint-staged && npx tsc --noEmit"
+  }
 }

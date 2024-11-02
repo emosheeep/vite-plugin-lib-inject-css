@@ -1,19 +1,19 @@
 {
   "compilerOptions": {
     "target": "esnext",
+    "jsx": "preserve",
+    "lib": ["esnext"],
+    "baseUrl": ".",
     "module": "esnext",
     "moduleResolution": "node",
-    "strict": true,
-    "jsx": "preserve",
-    "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
+    "types": ["node"],
     "allowJs": true,
-    "allowSyntheticDefaultImports": true,
+    "strict": true,
     "noImplicitAny": false,
     "outDir": "dist",
-    "baseUrl": ".",
-    "types": ["node"],
-    "lib": ["esnext"]
+    "allowSyntheticDefaultImports": true,
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true
   },
   "include": ["**/*.ts"],
   "exclude": ["node_modules"]
