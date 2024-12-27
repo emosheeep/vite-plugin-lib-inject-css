@@ -18,13 +18,12 @@ jobs:
     if: github.event.pull_request.merged || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 18
-      - uses: pnpm/action-setup@v2.2.4
+          node-version: 22.6.0
+      - uses: pnpm/action-setup@v4
         with:
-          version: 8
           run_install: true
 
       # consume changesets and create pr if it exists, otherwise publish package
