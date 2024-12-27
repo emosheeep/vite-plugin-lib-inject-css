@@ -1,5 +1,13 @@
 # vite-plugin-lib-inject-css
 
+## 2.2.0
+
+### Minor Changes
+
+- feat: support code injection when `output.preserveModules` option is enabled, closes [#29](https://github.com/emosheeep/vite-plugin-lib-inject-css/issues/29)
+- chore: upgrade eco-dependencies
+- refactor: use typed api of ast-grep instead
+
 ## 2.1.1
 
 ### Patch Changes

@@ -82,7 +82,7 @@ But when it comes to component library development, multiple entries are often i
 
 Based on this, we need to write a plugin to try to find the relationship between the two, and inject styles correctly.
 
-# How does it work
+# How does It Work
 
 As a library(mostly component library), we want to import styles automatically when referencing the component.
 
@@ -117,11 +117,9 @@ We can get which resources(include CSS files) are associated with current chunk 
 
 *Prefer to check plugin source code to get more information and welcome to make contribution*, which is simple enough(100+ lines).
 
-# Recipes of creating component library
+# Recipes of Creating Component Library
 
 How do we create a component library with vite, which can auto import styles and has out-of-box tree-shaking functionality?
-
-## Current Status
 
 Most of component libraries provide two ways. One is totally import:
 
@@ -142,7 +140,7 @@ import 'component-lib/dist/button/style.css'
 
 **But the best way is that when we use named imports, the style imports and tree-shaking can be applied automatically**.
 
-## How should we do
+## How Should We do
 
 Fortunately, ES Module naturally has static analysis capabilities, and mainstream tools basically implement ESM-based Tree-shaking functions, such as `webpack/rollup/vite`.
 
@@ -168,15 +166,13 @@ Here's an example:
 
 # Questions
 
-## Why does style code injection fail?
+## Why does Style Code Injection Fail?
 
 Here're some possible reasons:
 
 - When `build.cssCodeSplit` is `false`, all of css code will be collected into a standalone css file named `style.css`, **style injection will be skipped**.
 
-- When `rollupOptions.output.preserveModules` is `true`, the association between a chunk and the css it referenced will lose for some reason, in which case **style injection will be skipped**.
-
-Due to the **internal implementation**, we have to make some trade-offs:
+- *Before v2.2.0*, when `rollupOptions.output.preserveModules` is enabled, the style code injection will be skipped for some reasons. This problem has been solved, refers to [#29](https://github.com/emosheeep/vite-plugin-lib-inject-css/issues/29).
 
 ```js
 {
@@ -185,19 +181,19 @@ Due to the **internal implementation**, we have to make some trade-offs:
   },
   rollupOptions: {
     output: {
-      preserveModules: false, // Required. This is rollup's default behavior, you'll get a warn message if you set `true`.
+      preserveModules: false, // Required before v2.2.0.
     }
   }
 }
 ```
 
-## About `preserveModules`
+## About Rollup Option `output.preserveModules`
 
-Anytime when you attempt using this option, there in common may  has more efficient ways to meet you. For example, **you can turn every file into an entry point, like suggested in the Rollup [docs](https://rollupjs.org/configuration-options/#input)**:
+Anytime when you attempt using this option, there in common may  has more efficient ways to help you. For example, **you can turn every file into an entry point, like suggested in the Rollup [docs](https://rollupjs.org/configuration-options/#input)**:
 
 > If you want to convert a set of files to another format while maintaining the file structure and export signatures, the recommended way—instead of using `output.preserveModules` that may tree-shake exports as well as emit virtual files created by plugins—is to turn every file into an entry point. You can do so dynamically e.g. via the `glob` package:
 
-## Why do additional empty imports turn up in entry chunks?
+## Why do Additional Empty Imports Turn Up in Entry Chunks?
 
 When using **multiple** chunks, imports of dependencies of entry chunks will be added as empty imports to the entry chunks themselves. This is rollup's default behavior **in order for javascript engine performance optimizations**, you can turn it off via `output.hoistTransitiveImports: false`.
 
@@ -219,7 +215,7 @@ Further, see [why-do-additional-imports-turn-up-in-my-entry-chunks-when-code-spl
 
 As a third-part library, this behavior may cause sideEffects and make tree-shaking fail, so we set `hoistTransitiveImports: false` internally by default, you can still manually overwrite it.
 
-## Output directory structure is ugly when building with multi-entries.
+## Output Directory Structure is Ugly when Building with Multi-entries.
 
 When we build our library with multi-entries, the output looks as follows in common:
 
