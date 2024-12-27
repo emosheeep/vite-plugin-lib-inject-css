@@ -1,20 +1,11 @@
+import type JavaScriptTypes from '@ast-grep/napi/lang/JavaScript';
 import type { Plugin, ResolvedConfig } from 'vite';
 import path from 'node:path';
-import { js } from '@ast-grep/napi';
+import { Lang, parse } from '@ast-grep/napi';
 import MagicString from 'magic-string';
 import color from 'picocolors';
 
 const pluginName = 'vite:lib-inject-css';
-
-const excludeTokens = new Set(['expression_statement', 'import_statement']);
-
-function createPreserveModulesWarning(optionPath: string) {
-  return (
-    `When \`${optionPath}\` is \`true\`, `
-    + `the association between chunk file and its css references will lose, `
-    + `so the style code injection will be skipped.`
-  );
-}
 
 /**
  * Inject css at the top of each generated chunk file, only works with library mode.
@@ -44,13 +35,13 @@ export function libInjectCss(): Plugin {
         build: {
           /**
            * Must enable css code split, otherwise there's only one `style.css` and `chunk.viteMetadata.importedCss` will be empty.
-           * @see https://github.com/vitejs/vite/blob/HEAD/packages/vite/src/node/plugins/css.ts#L613
+           * @see https://vite.dev/config/build-options.html#build-csscodesplit
            */
           cssCodeSplit: true,
           /**
            * Must emit assets on SSR, otherwise there won't be any CSS files generated and the import statements
            * injected by this plugin will refer to an undefined module.
-           * @see https://github.com/vitejs/vite/blob/HEAD/packages/vite/src/node/plugins/asset.ts#L213-L218
+           * @see https://vite.dev/config/build-options.html#build-ssremitassets
            */
           ssrEmitAssets: true,
         },
@@ -61,32 +52,12 @@ export function libInjectCss(): Plugin {
     },
     options() {
       const { build, command } = resolvedConfig;
-      const outputOptions = [build.rollupOptions.output].flat();
       const messages: string[] = [];
 
       if (!build.lib || command !== 'build') {
         skipInject = true;
         messages.push(
           'Current is not in library mode or building process, skip code injection.',
-        );
-      }
-
-      if (outputOptions.some((v) => v?.preserveModules === true)) {
-        skipInject = true;
-        messages.push(
-          createPreserveModulesWarning('rollupOptions.output.preserveModules'),
-        );
-      }
-
-      /** rollupOptions.preserveModules is only exist below version 4 */
-      if (
-        Number.parseInt(this.meta.rollupVersion) < 4
-        // @ts-ignore
-        && build.rollupOptions.preserveModules === true
-      ) {
-        skipInject = true;
-        messages.push(
-          createPreserveModulesWarning('rollupOptions.preserveModules'),
         );
       }
 
@@ -113,12 +84,13 @@ export function libInjectCss(): Plugin {
           continue;
         }
 
-        const node = js
-          .parse(chunk.code)
+        const node = parse<JavaScriptTypes>(Lang.JavaScript, chunk.code)
           .root()
           .children()
-          // find the first element that don't be included.
-          .find((node) => !excludeTokens.has(node.kind()));
+          .find((node) =>
+            // find the first element that don't be included.
+            !node.is('expression_statement') || !node.is('import_statement')
+          );
 
         const position = node?.range().start.index ?? 0;
 

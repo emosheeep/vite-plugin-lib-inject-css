@@ -12,21 +12,21 @@
     "build-storybook": "storybook build"
   },
   "devDependencies": {
-    "@storybook/addon-essentials": "^8.4.1",
-    "@storybook/addon-interactions": "^8.4.1",
-    "@storybook/addon-links": "^8.4.1",
-    "@storybook/blocks": "^8.4.1",
-    "@storybook/test": "^8.4.1",
-    "@storybook/vue3": "^8.4.1",
-    "@storybook/vue3-vite": "^8.4.1",
-    "@types/node": "^20.17.5",
-    "@vitejs/plugin-vue": "^4.6.2",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "storybook": "^8.4.1",
-    "typescript": "^5.6.3",
-    "vite": "^5.4.10",
-    "vite-plugin-dts": "^3.9.1",
-    "vue": "^3.5.12"
+    "@storybook/addon-essentials": "^8.4.7",
+    "@storybook/addon-interactions": "^8.4.7",
+    "@storybook/addon-links": "^8.4.7",
+    "@storybook/blocks": "^8.4.7",
+    "@storybook/test": "^8.4.7",
+    "@storybook/vue3": "^8.4.7",
+    "@storybook/vue3-vite": "^8.4.7",
+    "@types/node": "^20.17.10",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "storybook": "^8.4.7",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.6",
+    "vite-plugin-dts": "^4.4.0",
+    "vue": "^3.5.13"
   }
 }
