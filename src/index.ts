@@ -1,9 +1,15 @@
 import type JavaScriptTypes from '@ast-grep/napi/lang/JavaScript';
+import type { Kinds } from '@ast-grep/napi/types/staticTypes';
 import type { Plugin, ResolvedConfig } from 'vite';
 import path from 'node:path';
 import { Lang, parse } from '@ast-grep/napi';
 import MagicString from 'magic-string';
 import color from 'picocolors';
+
+const excludeTokens: Kinds<JavaScriptTypes>[] = [
+  'import_statement',
+  'expression_statement',
+];
 
 const pluginName = 'vite:lib-inject-css';
 
@@ -87,10 +93,8 @@ export function libInjectCss(): Plugin {
         const node = parse<JavaScriptTypes>(Lang.JavaScript, chunk.code)
           .root()
           .children()
-          .find((node) =>
-            // find the first element that don't be included.
-            !node.is('expression_statement') || !node.is('import_statement')
-          );
+          // find the first element that don't be included.
+          .find((node) => !excludeTokens.includes(node.kind()));
 
         const position = node?.range().start.index ?? 0;
 

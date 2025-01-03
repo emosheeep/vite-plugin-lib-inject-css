@@ -1,7 +1,7 @@
 {
   "name": "vite-plugin-lib-inject-css",
   "type": "module",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "packageManager": "pnpm@9.15.1",
   "description": "Inject css at the top of chunk file in lib mode using `import` statement, support multiple entries.",
   "author": "秦旭洋 <emosheep@qq.com>",

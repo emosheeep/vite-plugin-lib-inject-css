@@ -1,5 +1,11 @@
 # vite-plugin-lib-inject-css
 
+## 2.2.1
+
+### Patch Changes
+
+- fix: re-introduced [#21](https://github.com/emosheeep/vite-plugin-lib-inject-css/issues/21), styles should be injected after 'use strict'
+
 ## 2.2.0
 
 ### Minor Changes
