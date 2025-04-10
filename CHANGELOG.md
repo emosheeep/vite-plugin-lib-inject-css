@@ -1,5 +1,11 @@
 # vite-plugin-lib-inject-css
 
+## 2.2.2
+
+### Patch Changes
+
+- chore: upgrade eco-dependencies, closes [#31](https://github.com/emosheeep/vite-plugin-lib-inject-css/issues/31)
+
 ## 2.2.1
 
 ### Patch Changes
